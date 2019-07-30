@@ -1,0 +1,5 @@
+server:
+  port: 8887
+client_id: Iv1.b7d0686e97d9e912
+client_secret: bedefe6865bcce7df9d367373a0d54fce2d37ff7
+Redirect_uri: http://localhost:8887/callback
