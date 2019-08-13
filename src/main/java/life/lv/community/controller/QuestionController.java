@@ -24,8 +24,6 @@ public class QuestionController {
         QuestionDTO questionDTO=questionService.getById(id);
         List<QuestionDTO> relateQuestions=questionService.questionByTagList(questionDTO);
         List<CommentDTO> commentDTOList=commentService.listByQuestionId(id, CommentTypeEnum.QUESTION.getType());
-
-
         //增加阅读数
         questionService.incView(id);
         model.addAttribute("question",questionDTO);
