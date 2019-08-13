@@ -9,3 +9,28 @@ spring:
     username: root
     password: rjxy
     driver-class-name: com.mysql.cj.jdbc.Driver
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+endpoint: http://oss-cn-beijing.aliyuncs.com
+accessKeyId: LTAIlAHWpVWuoRQH
+accessKeySecret: Zg6oKK5WFdMiN8IEmKPAUWAvGUxfzG
+bucketName: shuixin
+
+logging:
+  file: logs/community.log
+  max-history: 15
+  max-size: 100MB
+  level:
+    root: info
+    life:
+      lv:
+        community:
+          mapper: debug
+
+
+
+
+
+
+
