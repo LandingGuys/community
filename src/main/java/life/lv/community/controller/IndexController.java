@@ -17,7 +17,7 @@ public class IndexController {
     @GetMapping("/")
     public String index(Model model,
                         @RequestParam(value = "page",defaultValue = "1") Integer page,
-                        @RequestParam(value = "pageNum",defaultValue = "5") Integer pageNum,
+                        @RequestParam(value = "pageNum",defaultValue = "10") Integer pageNum,
                         @RequestParam(value = "search",required = false) String search
                        ){
 
