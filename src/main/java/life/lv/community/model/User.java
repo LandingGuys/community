@@ -18,4 +18,7 @@ public class User {
     private Long gmtModified;
     //github用户头像
     private String avatarUrl;
+
+
+
 }

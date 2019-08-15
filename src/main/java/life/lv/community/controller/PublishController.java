@@ -39,17 +39,16 @@ public class PublishController {
         model.addAttribute("title",title);
         model.addAttribute("description",description);
         model.addAttribute("tag",tag);
-
-        if(title==null||title.trim()==""){
-            model.addAttribute("error", "标题不能为空");
+        if(title==null || title.trim().length()==0){
+            model.addAttribute("error", "标题不能为空，只有空格也不行哦！");
             return "publish";
         }
-        if(description==null||description.trim()==""){
-            model.addAttribute("error", "内容不能为空");
+        if(description==null||description.trim().length()==0){
+            model.addAttribute("error", "内容不能为空，只有空格也不行哦！");
             return "publish";
         }
-        if(tag==null||tag.trim()==""){
-            model.addAttribute("error", "标签不能为空");
+        if(tag==null||tag.trim().length()==0){
+            model.addAttribute("error", "标签不能为空，只有空格也不行哦！");
             return "publish";
         }
         //判断标签是否非法
@@ -82,15 +81,17 @@ public class PublishController {
         User publishUser=userMapper.findById(question.getCreator());
         if(user==null){
             throw new CustomizeException(CustomizeErrorCode.EDIT_QUEDTION_NOTLOGIN);
-        } else if(user!=publishUser){
-            throw new CustomizeException(CustomizeErrorCode.EDIT_QUESTION_FAIL);
-        }else {
+        }
+        if(user.equals(publishUser)){
             model.addAttribute("title",question.getTitle());
             model.addAttribute("description",question.getDescription());
             model.addAttribute("tag",question.getTag());
             model.addAttribute("id",question.getId());
             model.addAttribute("tags",TagCache.get());
             return "publish";
+
+        }else {
+            throw new CustomizeException(CustomizeErrorCode.EDIT_QUESTION_FAIL);
         }
 
     }
