@@ -2,6 +2,9 @@ package life.lv.community.controller;
 
 import life.lv.community.cache.TagCache;
 import life.lv.community.dto.QuestionDTO;
+import life.lv.community.exception.CustomizeErrorCode;
+import life.lv.community.exception.CustomizeException;
+import life.lv.community.mapper.UserMapper;
 import life.lv.community.model.Question;
 import life.lv.community.model.User;
 import life.lv.community.service.QuestionService;
@@ -9,10 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 public class PublishController {
     @Autowired
     private QuestionService questionService;
+    @Autowired
+    private UserMapper userMapper;
     @GetMapping("/publish")
     public String publish(Model model){
         model.addAttribute("tags", TagCache.get());
@@ -38,15 +40,15 @@ public class PublishController {
         model.addAttribute("description",description);
         model.addAttribute("tag",tag);
 
-        if(title==null||title==""){
+        if(title==null||title.trim()==""){
             model.addAttribute("error", "标题不能为空");
             return "publish";
         }
-        if(description==null||description==""){
+        if(description==null||description.trim()==""){
             model.addAttribute("error", "内容不能为空");
             return "publish";
         }
-        if(tag==null||tag==""){
+        if(tag==null||tag.trim()==""){
             model.addAttribute("error", "标签不能为空");
             return "publish";
         }
@@ -73,14 +75,24 @@ public class PublishController {
     }
     @GetMapping("/publish/{id}")
     public String edit(@PathVariable("id") Long id,
+                       HttpServletRequest request,
                        Model model){
+        User user=(User)request.getSession().getAttribute("user");
         QuestionDTO question=questionService.getById(id);
-        model.addAttribute("title",question.getTitle());
-        model.addAttribute("description",question.getDescription());
-        model.addAttribute("tag",question.getTag());
-        model.addAttribute("id",question.getId());
-        model.addAttribute("tags",TagCache.get());
-        return "publish";
+        User publishUser=userMapper.findById(question.getCreator());
+        if(user==null){
+            throw new CustomizeException(CustomizeErrorCode.EDIT_QUEDTION_NOTLOGIN);
+        } else if(user!=publishUser){
+            throw new CustomizeException(CustomizeErrorCode.EDIT_QUESTION_FAIL);
+        }else {
+            model.addAttribute("title",question.getTitle());
+            model.addAttribute("description",question.getDescription());
+            model.addAttribute("tag",question.getTag());
+            model.addAttribute("id",question.getId());
+            model.addAttribute("tags",TagCache.get());
+            return "publish";
+        }
+
     }
 
     

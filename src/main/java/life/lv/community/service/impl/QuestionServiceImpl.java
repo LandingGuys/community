@@ -98,10 +98,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public void createOrUpdate(Question question) {
-
-
         Question dbQuestion=questionMapper.getById(question.getId());
-
         if(dbQuestion==null){
             //插入
             question.setGmtCreate(System.currentTimeMillis());

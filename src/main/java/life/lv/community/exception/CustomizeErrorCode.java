@@ -16,6 +16,8 @@ public enum CustomizeErrorCode {
     FILE_UPLOAD_FAIL(2010, "图片上传失败"),
     INVALID_INPUT(2011, "非法输入"),
     INVALID_OPERATION(2012, "兄弟，是不是走错房间了？"),
+    EDIT_QUESTION_FAIL(2013,"兄dei你虽然登录了但也不能改别人的问题呀！！！"),
+    EDIT_QUEDTION_NOTLOGIN(2014,"兄dei你还没登录就想改别人的问题？？？")
     ;
     private Integer code;
     private String message;
