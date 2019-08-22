@@ -5,7 +5,7 @@ function publish() {
     var title=$("#title").val();
     var description=$("#description").val();
     var tag=$("#tag").val();
-    var id=$("#id").val
+    var id=$("#id").val();
     if(!title){
         swal("问题标题不能为空~~~", "You clicked the button!", "warning");
         return;
