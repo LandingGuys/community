@@ -18,4 +18,6 @@ public interface QuestionService {
     public void incView(Long id);
 
     public List<QuestionDTO> questionByTagList(QuestionDTO questionDTO);
+
+    void incLike(long id);
 }

@@ -16,4 +16,6 @@ public interface CommentMapper {
     List<Comment> listByQuestionId(@Param("parentId") Long parentId,@Param("type") Integer type);
     @Update("update comment set comment_count=comment_count+1 where id=#{id}")
     void updateComment(Comment comment);
+    @Update("update comment set like_count=like_count+1 where id=#{id}")
+    void incLikeComment(@Param("id") long id);
 }

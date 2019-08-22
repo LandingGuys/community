@@ -59,8 +59,9 @@ public class CommentServiceImpl implements CommentService {
             }
             commentMapper.insert(comment);
             commentMapper.updateComment(dbComment);
-            createNotify(comment, dbComment.getCommentator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
-
+            //Notification notification=CreateNotifyUtil.createNotify(comment, dbComment.getCommentator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
+            createNotify(comment, dbComment.getCommentator(), commentator.getName(), comment.getContent(), NotificationTypeEnum.REPLY_COMMENT, comment.getId());
+            //notificationMapper.create(notification);
         }else {
             //回复问题
             Question question = questionMapper.getById(comment.getParentId());
@@ -69,8 +70,9 @@ public class CommentServiceImpl implements CommentService {
             }
             commentMapper.insert(comment);
             questionMapper.updateComment(question);
+            //Notification notification=CreateNotifyUtil.createNotify(comment, question.getCreator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_QUESTION, question.getId());
             createNotify(comment, question.getCreator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_QUESTION, question.getId());
-
+            //notificationMapper.create(notification);
         }
     }
 

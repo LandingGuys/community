@@ -19,7 +19,7 @@ public class Comment {
     //更新时间
     private Long gmtModified;
     //点赞数
-    private Long likeCount;
+    private Integer likeCount;
     //评论数
     private Long commentCount;
 }

@@ -5,4 +5,5 @@ import life.lv.community.model.User;
 public interface UserService {
 
    public void createOrUpdate(User user);
+   public void updateUser(User user);
 }

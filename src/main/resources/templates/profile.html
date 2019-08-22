@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title th:text="${sectionName}"></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/community.css">
@@ -11,23 +11,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 </head>
 <body>
-<div th:insert="~{navgation :: nav}" ></div>
+<div th:insert="~{navgation :: nav}"></div>
 <div class="container-fluid main profile">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <h3 th:text="${sectionName}"></h3>
             <hr>
-            <div th:if="${section}=='questions'">
-                <ul class="media-list">
-                    <li class="media" th:each="question : ${pageination.data}">
-                        <div class="media-left">
-                            <a href="#">
-                                <img class="media-object" src="https://elasticsearch.cn/uploads/avatar/000/00/44/60_avatar_max.jpg" th:src="${question.user.avatarUrl}">
-                            </a>
+            <!--个人中心-->
+            <div th:if="${section}=='personal'" style="height: 450px">
+                <div class="header">
+                    <img class="head"  th:src="${session.user.getAvatarUrl()}" alt="..." >
+                    <p class="modify" data-toggle="modal" data-target="#exampleModal">修改头像</p>
+                </div>
+                <!--更换头像弹出框-start-->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">更改头像</h4>
+                            </div>
+                            <form class="" action="/file/imageUpload" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="id" th:value="${session.user.getId()}"/>
+                                <div class="modal-body">
+                                    <label>选择头像</label>
+                                    <div class="form-group">
+                                        <input type="file" name="uploadpic" onchange="viewImage(this)"/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button type="submit" class="btn btn-primary">保存</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="media-body">
-                            <a th:href="@{'/question/'+${question.id}}"><h4 class="media-heading" th:text="${question.title}"></h4></a>
-                            <span class="text-color-999">
+                    </div>
+                </div>
+                <!--更换头像弹出框-end-->
+                <div class="right-c col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                    <div class="right-info">
+                        <span>ID:&nbsp&nbsp</span><span th:text="${session.user.getAccountId()}"></span>
+                    </div>
+                    <div class="people-info">
+                        <span>关注：</span>
+                        <span>粉丝：</span>
+                    </div>
+                    <hr>
+                    <div class="nick">
+                        <span>昵称:&nbsp&nbsp</span><span th:text="${session.user.getName()}"></span>
+                        <span class="mod" data-toggle="modal" data-target="#updateUser" data-whatever="">修改资料</span>
+                    </div>
+                    <!--修改资料start-->
+                    <div class="modal fade bs-example-modal-sm" id="updateUser" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                        <div class="modal-dialog modal-sm" role="document" >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="modal-title" id="myModalLabel" style="text-align: center;">修改资料</div>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" style="padding: 12px;" action="/profile/updatePersonal" method="get">
+
+                                        <input type="hidden" name="accountId" th:value="${session.user.getAccountId()}"/>
+                                        <div class="form-group">
+                                            <p>昵称：<input type="text" name="name" th:value="${session.user.getName()}" style="width: 400px"/></p>
+                                            <p>实名：<input type="text" name="userName" th:value="${session.user.getUserName()}" style="width: 400px"/></p>
+                                            <p>地区：<input type="text" name="userRegion" th:value="${session.user.getUserRegion()}" style="width: 400px"/></p>
+                                            <p>行业：<input type="text" name="userIndustry" th:value="${session.user.getUserIndustry()}" style="width: 400px"/></p>
+                                            <p>简介：<input type="text" name="userIntroduction" th:value="${session.user.getUserIntroduction()}" style="width: 400px"/></p>
+                                        </div>
+                                        <div class="form-footer" style="margin-left: 400px">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                            <button type="submit" class="btn btn-primary">保存</button>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--修改资料end-->
+                    <ul class="self-list">
+                        <li class="common">实名：&nbsp&nbsp<span th:text="${session.user.getUserName()}"></span></li>
+                        <li class="common">地区：&nbsp&nbsp<span th:text="${session.user.getUserRegion()}"></span></li>
+                        <li class="common">行业：&nbsp&nbsp<span th:text="${session.user.getUserIndustry()}"></span></li>
+                        <li class="common">简介：&nbsp&nbsp<span th:text="${session.user.getUserIntroduction()}"></span></li>
+                    </ul>
+                </div>
+
+            </div>
+            <!--我的问题-->
+            <div th:if="${section}=='questions'" style="height: 450px">
+                <div style="height: 380px">
+                    <ul class="media-list" style="line-height: 30px">
+                        <li class="media" th:each="question : ${pageination.data}">
+                            <div class="media-left">
+                                <a href="#">
+                                    <img class="media-object"
+                                         src="https://elasticsearch.cn/uploads/avatar/000/00/44/60_avatar_max.jpg"
+                                         th:src="${question.user.avatarUrl}">
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <a th:href="@{'/question/'+${question.id}}"><h4 class="media-heading"
+                                                                                th:text="${question.title}"></h4></a>
+                                <span class="text-color-999">
                                 <span th:text="${question.commentCount}"></span>个评论 •
                                 <span th:text="${question.viewCount}"></span> 次浏览 •
                                 <span th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
@@ -36,51 +123,97 @@
                                      <span class="glyphicon glyphicon-pencil" aria-hidden="true">编辑</span>
                                 </a>
                             </span>
-                        </div>
-                    </li>
-                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mod-footer">
+                    <div class="page-control">
+                        <ul class="pagination pull-right" th:if="${pageination.totalPage!=0}">
+                            <li><a href="" th:if="${pageination.showFirstPage}"
+                                   th:href="@{'/profile/'+${section}(page=${1})}">&lt;&lt;</a></li>
+                            <li><a th:href="@{'/profile/'+${section}(page=${pageination.page - 1})}"
+                                   th:if="${pageination.showPrePage}">&lt;</a></li>
+                            <li th:class="${pageination.page==page?'active':''}" th:each="page:${pageination.pages}"><a
+                                    href="" th:href="@{'/profile/'+${section}(page=${page})}" th:text="${page}"></a></li>
+                            <li><a th:href="@{'/profile/'+${section}(page=${pageination.page + 1})}"
+                                   th:if="${pageination.showNextPage}">&gt;</a></li>
+                            <li><a th:href="@{'/profile/'+${section}(page=${pageination.totalPage})}"
+                                   th:if="${pageination.showEndPage}">&gt;&gt;</a></li>
+                        </ul>
+                    </div>
+                </div>
+
             </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'replies'}">
-                <div class="media" th:each="notification : ${pageination.data}">
-                    <div class="media-body">
-                        <p class="media-heading">
-                            <span th:text="${notification.notifierName +' ' + notification.typeName + ' '}"></span>
-                            <a th:href="@{'/notification/'+ ${notification.id}}"
-                               th:text="${notification.outerTitle}">
-                            </a>
-                            <span class="label label-danger" th:if="${notification.status == 0}">未读</span>
-                        </p>
+            <!--我的通知-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'replies'}" style="height: 450px">
+                <div style="height: 380px">
+                    <div class="media" th:each="notification : ${pageination.data}" style="line-height: 30px">
+                        <div class="media-body">
+                            <p class="media-heading">
+                                <span th:text="${notification.notifierName +' ' + notification.typeName + ' '}"></span>
+                                <a th:href="@{'/notification/'+ ${notification.id}}"
+                                   th:text="${notification.outerTitle}">
+                                </a>
+                                <span style="float: right">
+                                <span class="label label-danger" th:if="${notification.status == 0}">未读</span>
+                                <span class="label label-success" th:if="${notification.status == 1}">已读</span>
+                            </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mod-footer">
+                    <div class="page-control">
+                        <ul class="pagination pull-right" th:if="${pageination.totalPage!=0}">
+                            <li><a href="" th:if="${pageination.showFirstPage}"
+                                   th:href="@{'/profile/'+${section}(page=${1})}">&lt;&lt;</a></li>
+                            <li><a th:href="@{'/profile/'+${section}(page=${pageination.page - 1})}"
+                                   th:if="${pageination.showPrePage}">&lt;</a></li>
+                            <li th:class="${pageination.page==page?'active':''}" th:each="page:${pageination.pages}"><a
+                                    href="" th:href="@{'/profile/'+${section}(page=${page})}" th:text="${page}"></a></li>
+                            <li><a th:href="@{'/profile/'+${section}(page=${pageination.page + 1})}"
+                                   th:if="${pageination.showNextPage}">&gt;</a></li>
+                            <li><a th:href="@{'/profile/'+${section}(page=${pageination.totalPage})}"
+                                   th:if="${pageination.showEndPage}">&gt;&gt;</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="mod-footer">
-                <div class="page-control">
-                    <ul class="pagination pull-right" th:if="${pageination.totalPage!=0}">
-                        <li><a href="" th:if="${pageination.showFirstPage}" th:href="@{'/profile/'+${section}(page=${1})}">&lt;&lt;</a></li>
-                        <li><a th:href="@{'/profile/'+${section}(page=${pageination.page - 1})}" th:if="${pageination.showPrePage}">&lt;</a></li>
-                        <li th:class="${pageination.page==page?'active':''}" th:each="page:${pageination.pages}"><a href="" th:href="@{'/profile/'+${section}(page=${page})}"  th:text="${page}"></a></li>
-                        <li><a th:href="@{'/profile/'+${section}(page=${pageination.page + 1})}" th:if="${pageination.showNextPage}">&gt;</a></li>
-                        <li><a th:href="@{'/profile/'+${section}(page=${pageination.totalPage})}" th:if="${pageination.showEndPage}">&gt;&gt;</a></li>
-                    </ul>
-                </div>
-            </div>
         </div>
+            <!--我的关注-->
+
+            <!--我的收藏-->
+
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
             <div class="list-group section">
-                <a href="/profile/questions"  th:class="${section=='questions'?'list-group-item active':'list-group-item'}">
+                <a href="/profile/personal"
+                   th:class="${section=='personal'?'list-group-item active':'list-group-item'}">
+                    个人中心
+                </a>
+                <a href="/profile/questions"
+                   th:class="${section=='questions'?'list-group-item active':'list-group-item'}">
                     我的提问
                 </a>
-                <a href="/profile/replies"  th:class="${section=='replies'?'active list-group-item':'list-group-item'}">
+                <a href="/profile/replies" th:class="${section=='replies'?'active list-group-item':'list-group-item'}">
                     最新回复
                     <span class="badge" th:text="${session.unreadCount}"></span>
                 </a>
-
+                <a href="/profile/follow" th:class="${section=='follow'?'list-group-item active':'list-group-item'}">
+                    我的关注
+                </a>
+                <a href="/profile/collection"
+                   th:class="${section=='collection'?'list-group-item active':'list-group-item'}">
+                    我的收藏
+                </a>
             </div>
 
         </div>
     </div>
 
 </div>
-<div th:insert="~{footer :: foot}" ></div>
+<div th:insert="~{footer :: foot}"></div>
 </body>
 </html>

@@ -17,17 +17,29 @@ public class UserServiceImpl implements UserService {
        if(dbUser!=null){
            //更新
            dbUser.setGmtModified(System.currentTimeMillis());
-           dbUser.setName(user.getName());
-           dbUser.setAvatarUrl(user.getAvatarUrl());
+//           dbUser.setName(user.getName());
+//           dbUser.setAvatarUrl(user.getAvatarUrl());
            dbUser.setToken(user.getToken());
            userMapper.update(dbUser);
-
        }else{
            //插入
            user.setGmtCreate(System.currentTimeMillis());
            user.setGmtModified(user.getGmtCreate());
            userMapper.insert(user);
        }
+    }
+
+    @Override
+    public void updateUser(User user) {
+        User dbUser= userMapper.findByAccountId(user.getAccountId());
+        if(dbUser!=null){
+            dbUser.setUserName(user.getUserName());
+            dbUser.setName(user.getName());
+            dbUser.setUserIndustry(user.getUserIndustry());
+            dbUser.setUserRegion(user.getUserRegion());
+            dbUser.setUserIntroduction(user.getUserIntroduction());
+            userMapper.update(dbUser);
+        }
 
 
     }

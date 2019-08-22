@@ -4,6 +4,7 @@ import life.lv.community.dto.PageinationDTO;
 import life.lv.community.model.User;
 import life.lv.community.service.NotificationService;
 import life.lv.community.service.QuestionService;
+import life.lv.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 
 public class ProfileController {
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private QuestionService questionService;
@@ -31,6 +34,11 @@ public class ProfileController {
         if(user==null){
             return "redirect:/";
         }
+        if("personal".equals(action)){
+            model.addAttribute("section","personal");
+            model.addAttribute("sectionName","个人中心");
+
+        }
         if("questions".equals(action)){
             model.addAttribute("section","questions");
             model.addAttribute("sectionName","我的提问");
@@ -42,9 +50,21 @@ public class ProfileController {
             model.addAttribute("pageination", pageinationDTO);
             model.addAttribute("section","replies");
             model.addAttribute("sectionName","最新回复");
-
         }
-
+        if("follow".equals(action)){
+            model.addAttribute("section","follow");
+            model.addAttribute("sectionName","最新回复");
+        }
+        if("collection".equals(action)){
+            model.addAttribute("section","collection");
+            model.addAttribute("sectionName","最新回复");
+        }
         return "profile";
+    }
+    @GetMapping("/profile/updatePersonal")
+    public String updatePersonal(User user){
+        userService.updateUser(user);
+
+        return "redirect:/profile/personal";
     }
 }

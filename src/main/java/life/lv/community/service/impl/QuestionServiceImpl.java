@@ -124,6 +124,12 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public void incLike(long id) {
+        Question question = questionMapper.getById(id);
+        questionMapper.updateLike(question);
+    }
+
+    @Override
     public List<QuestionDTO> questionByTagList(QuestionDTO questionDTO) {
         if(StringUtils.isBlank(questionDTO.getTag())){
             return new ArrayList<>();

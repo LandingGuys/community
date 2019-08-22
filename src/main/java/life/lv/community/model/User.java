@@ -18,7 +18,13 @@ public class User {
     private Long gmtModified;
     //github用户头像
     private String avatarUrl;
-
-
+    //用户真实姓名
+    private String userName;
+    //用户地区
+    private String userRegion;
+    //用户行业
+    private String userIndustry;
+    //用户简介
+    private String userIntroduction;
 
 }

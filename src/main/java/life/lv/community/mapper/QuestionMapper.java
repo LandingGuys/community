@@ -32,5 +32,6 @@ public interface QuestionMapper {
     List<Question> questionBySearchList(@Param("search") String search,@Param(value = "offset") Integer offset, @Param("pageNum") Integer pageNum);
     @Select("select count(*) from question where title REGEXP #{search}")
     Integer countBySearch(@Param(value = "search") String search);
-
+    @Update("update question set like_count=like_count+1 where id=#{id}")
+    void updateLike(Question question);
 }

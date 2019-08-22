@@ -1,14 +1,81 @@
 /**
+ * 发布问题
+ */
+function publish() {
+    var title=$("#title").val();
+    var description=$("#description").val();
+    var tag=$("#tag").val();
+    var id=$("#id").val
+    if(!title){
+        swal("问题标题不能为空~~~", "You clicked the button!", "warning");
+        return;
+    }
+    if(!description){
+        swal("问题内容不能为空~~~", "You clicked the button!", "warning");
+        return;
+    }
+    if(!tag){
+        swal("问题标签不能为空~~~", "You clicked the button!", "warning");
+        return;
+    }
+    $.ajax({
+        type:"POST",
+        url:"/publish",
+        contentType: 'application/json',
+        data:JSON.stringify({
+            "title":title,
+            "description":description,
+            "tag":tag,
+            "id":id
+        }),
+        success:function (response) {
+            if(response.code==200){
+                swal({
+                    title: '发布成功',
+                    text: '您已成功发布!',
+                    icon: 'success'
+                }).then(
+                    function () {
+                        window.location.href="/";
+                    }
+                )
+            }else{
+                if(response.code==2015){
+                    swal(response.message, "You clicked the button!", "warning");
+                }else if(response.code==2016){
+                    swal(response.message, "You clicked the button!", "waring");
+                }else if(response.code==2017){
+                    swal(response.message, "You clicked the button!", "waring");
+                }else if(response.code==2018){
+                    swal(response.message, "You clicked the button!", "error");
+                }
+
+            }
+            console.log(response);
+        },
+        dataType:"json"
+    })
+}
+
+
+
+
+
+
+/**
  * 提交回复
  */
 
+//回复问题
 function post() {
     var questionId=$("#question_id").val();
     var content = $('#comment_content').val();
     comment2Target(questionId,1,content);
 
-}
 
+
+}
+//回复评论
 function comment(e) {
     var commentId=e.getAttribute("data-id");
     var content=$("#input-"+commentId).val();
@@ -17,7 +84,8 @@ function comment(e) {
 }
 function comment2Target(targetId,type,content) {
     if(!content){
-        alert("评论不能为空哦~~~");
+        //alert("评论不能为空哦~~~");
+        swal("评论不能为空哦~~~", "You clicked the button!", "error");
         return;
     }
     $.ajax({
@@ -31,16 +99,36 @@ function comment2Target(targetId,type,content) {
         }),
         success:function (response) {
             if(response.code==200){
-                window.location.reload();
+                //swal("回复成功", "You clicked the button!", "success");
+               // window.location.reload();
+                swal({
+                    title: '回复成功',
+                    text: 'You clicked the button!',
+                    icon: 'success'
+                }).then(
+                    function () {
+                        window.location.reload();
+                    }
+                )
             }else{
                 if(response.code==2003){
-                    var isAccepted=confirm(response.message);
-                    if(isAccepted){
-                        window.open("https://github.com/login/oauth/authorize?client_id=Iv1.b7d0686e97d9e912&redirect_uri=http://47.95.146.87/callback&scope=user&state=1");
-                        window.localStorage.setItem("closeable",true);
-                    }
+                    swal(response.message, {
+                        buttons: ["取消", true],
+                    }).then(
+                        function () {
+                            window.open("https://github.com/login/oauth/authorize?client_id=Iv1.b7d0686e97d9e912&redirect_uri=http://47.95.146.87/callback&scope=user&state=1");
+                            window.localStorage.setItem("closeable",true);
+                        }
+                    );
+
+                    // var isAccepted=confirm(response.message);
+                    // if(isAccepted){
+                    //     window.open("https://github.com/login/oauth/authorize?client_id=Iv1.b7d0686e97d9e912&redirect_uri=http://47.95.146.87/callback&scope=user&state=1");
+                    //     window.localStorage.setItem("closeable",true);
+                    // }
                 }else{
-                    alert(response.message);
+                    //alert(response.message);
+                    swal(response.message, "You clicked the button!", "error");
                 }
 
             }
@@ -51,6 +139,156 @@ function comment2Target(targetId,type,content) {
 
 
 }
+
+/**
+ *
+ * 点赞问题
+ */
+function likeQuestion(e){
+    var questionId=e.getAttribute("data-id");
+    $.ajax({
+        type:"POST",
+        url:"/likeQuestion",
+        data:{
+            "id":questionId
+        },
+        success:function (response) {
+            if(response.code==200){
+                swal({
+                    title: '点赞成功！',
+                    text: '感谢老哥的点赞！',
+                    icon: 'success',
+                    timer: 2000
+                }).then(
+                    function () {
+                        //var count=eval(response);
+                        $("#likeQuestionCount").text(response.data.likeCount);
+                        $("#questionlike_btn").css({
+                            color:'red',
+                        })
+                    },
+                    function (dismiss) {
+                        if (dismiss === 'timer') {
+                            console.log('I was closed by the timer')
+                        }
+                    }
+                )
+            }else {
+                if(response.code==2019){
+                    swal({
+                        title: response.message,
+                        text: response.message,
+                        icon: 'warning',
+                        timer: 2000
+                    }).then(
+                        function () {
+                        },
+                        function (dismiss) {
+                            if (dismiss === 'timer') {
+                                console.log('I was closed by the timer')
+                            }
+                        }
+                    )
+
+                }
+                else if(response.code==2003){
+                    swal({
+                        title: response.message,
+                        text: response.message,
+                        icon: 'warning',
+                        timer: 2000
+                    }).then(
+                        function () {
+                        },
+                        function (dismiss) {
+                            if (dismiss === 'timer') {
+                                console.log('I was closed by the timer')
+                            }
+                        }
+                    )
+                }
+
+            }
+            console.log(response);
+        },
+        dataType:"json"
+    })
+}
+
+/**
+ *点赞评论
+ */
+function likeComment(e){
+    var commentId=e.getAttribute("data-id");
+    $.ajax({
+        type:"POST",
+        url:"/likeComment",
+        data:{
+            "id":commentId
+        },
+        success:function (response) {
+            if(response.code==200){
+                swal({
+                    title: '点赞成功！',
+                    text: '感谢老哥的点赞！',
+                    icon: 'success',
+                    timer: 2000
+                }).then(
+                    function () {
+                        //var count=eval(response);
+                        $("#likeCommentCount"+commentId).text(response.data.likeCount);
+                        $("#commentlike_btn"+commentId).css({
+                            color:'red',
+                        })
+                    },
+                    function (dismiss) {
+                        if (dismiss === 'timer') {
+                            console.log('I was closed by the timer')
+                        }
+                    }
+                )
+            }else {
+                if(response.code==2019){
+                    swal({
+                        title: response.message,
+                        text: response.message,
+                        icon: 'warning',
+                        timer: 2000
+                    }).then(
+                        function () {
+                        },
+                        function (dismiss) {
+                            if (dismiss === 'timer') {
+                                console.log('I was closed by the timer')
+                            }
+                        }
+                    )
+
+                }
+                else if(response.code==2003){
+                    swal({
+                        title: response.message,
+                        text: response.message,
+                        icon: 'warning',
+                        timer: 2000
+                    }).then(
+                        function () {
+                        },
+                        function (dismiss) {
+                            if (dismiss === 'timer') {
+                                console.log('I was closed by the timer')
+                            }
+                        }
+                    )
+                }
+
+            }
+            console.log(response);
+        },
+        dataType:"json"
+    })
+}
+
 
 
 /*

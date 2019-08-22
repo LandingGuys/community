@@ -25,15 +25,24 @@
                 </form>
                 <ul class="nav navbar-nav navbar-right">
                     <li th:if="${session.user!=null}"><a href="/publish">发布</a></li>
-                    <li th:if="${session.user!=null}"><a href="/profile/replies">通知<span class="badge" th:text="${session.unreadCount}"></span></a></li>
+                    <li th:if="${session.user!=null}">
+                        <a href="/profile/replies">
+                            <span class="glyphicon glyphicon-bell"></span>
+                            <span class="badge" th:text="${session.unreadCount}"></span>
+                        </a>
+                    </li>
                     <li class="dropdown" th:if="${session.user!=null}">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >
                             <span th:text="${session.user.getName()}"></span>
+                            <img class="img-rounded" width="20px" th:src="${session.user.getAvatarUrl()}" alt="...">
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
+                            <li><a href="/profile/personal">个人中心</a></li>
                             <li><a href="/profile/questions">我的问题</a></li>
-                            <!--<li><a href="#">个人中心</a></li>-->
+                            <li><a href="/profile/replies">我的通知</a></li>
+                            <li><a href="/profile/questions">我的关注</a></li>
+                            <li><a href="/profile/questions">我的收藏</a></li>
                             <li><a href="/logout">退出</a></li>
 
                         </ul>
