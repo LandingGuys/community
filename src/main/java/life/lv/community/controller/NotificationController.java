@@ -6,10 +6,12 @@ import life.lv.community.mapper.CommentMapper;
 import life.lv.community.model.Comment;
 import life.lv.community.model.User;
 import life.lv.community.service.NotificationService;
+import life.lv.community.utils.ResultVoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -45,8 +47,20 @@ public class NotificationController {
             return "redirect:/";
         }
     }
-
-
+    @ResponseBody
+    @GetMapping("/oneKeyRead")
+    public Object oneKeyRead(HttpServletRequest request){
+        User user=(User)request.getSession().getAttribute("user");
+        notificationService.readAll(user);
+        return ResultVoUtil.success();
+    }
+    @ResponseBody
+    @GetMapping("/deleteRead")
+    public Object deleteRead(HttpServletRequest request){
+        User user=(User)request.getSession().getAttribute("user");
+        notificationService.deleteRead(user);
+        return ResultVoUtil.success();
+    }
 
 
 }

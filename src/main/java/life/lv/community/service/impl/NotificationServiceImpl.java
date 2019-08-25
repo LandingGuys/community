@@ -86,4 +86,19 @@ public class NotificationServiceImpl implements NotificationService {
         notificationDTO.setTypeName(NotificationTypeEnum.nameOfType(notification.getType()));
         return notificationDTO;
     }
+    @Override
+    public void readAll(User user) {
+        Notification notification=new Notification();
+        notification.setStatus(NotificationStatusEnum.READ.getStatus());
+        notification.setReceiver(user.getId());
+        notificationMapper.updateStatusByReceiver(notification);
+    }
+
+    @Override
+    public void deleteRead(User user) {
+        Notification notification=new Notification();
+        notification.setStatus(NotificationStatusEnum.READ.getStatus());
+        notification.setReceiver(user.getId());
+        notificationMapper.deleteStatusByReceiver(notification);
+    }
 }

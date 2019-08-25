@@ -1,7 +1,7 @@
 server:
   port: 8887
-client_id: Iv1.b7d0686e97d9e912
-client_secret: bedefe6865bcce7df9d367373a0d54fce2d37ff7
+client_id: Iv1.b9785368af06692f
+client_secret: ff05fe28f0287463020a18bfd43313639dd63e6b
 Redirect_uri: http://localhost:8887/callback
 spring:
   datasource:

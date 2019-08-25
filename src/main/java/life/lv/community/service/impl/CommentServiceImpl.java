@@ -60,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
             commentMapper.insert(comment);
             commentMapper.updateComment(dbComment);
             //Notification notification=CreateNotifyUtil.createNotify(comment, dbComment.getCommentator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
-            createNotify(comment, dbComment.getCommentator(), commentator.getName(), comment.getContent(), NotificationTypeEnum.REPLY_COMMENT, comment.getId());
+            createNotify(comment, dbComment.getCommentator(), commentator.getName(), comment.getContent(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
             //notificationMapper.create(notification);
         }else {
             //回复问题

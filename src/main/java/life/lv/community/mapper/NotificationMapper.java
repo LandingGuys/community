@@ -28,8 +28,9 @@ public interface NotificationMapper {
     //未读通知数
     @Select("select count(1) from notification where receiver=#{userId} and status=#{status}")
     Long unReadCount(@Param(value = "userId") Long userId,@Param(value = "status") Integer status);
-
-
-
-
+    //一键阅读本人所有通知
+    @Update("update notification set status=#{status} where receiver=#{receiver}")
+    void updateStatusByReceiver(Notification notification);
+    @Delete("delete from notification where receiver=#{receiver} and status=#{status}")
+    void deleteStatusByReceiver(Notification notification);
 }

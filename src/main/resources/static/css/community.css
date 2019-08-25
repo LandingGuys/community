@@ -169,3 +169,8 @@ body {
 li{
     list-style: none;
 }
+a:hover, a:focus {
+    color: #1abc9c;
+    text-decoration: none;
+    cursor:pointer
+}

@@ -373,3 +373,58 @@ function selectTag(e) {
         }
     }
 }
+//一键已读
+function oneKeyRead() {
+    $.ajax({
+        type: "GET",
+        url: "/oneKeyRead",
+        data:{},
+        success:function (response) {
+            if(response.code==200){
+                swal({
+                    title: '操作成功',
+                    text: '操作成功',
+                    icon: 'success',
+                    timer: 2000
+                }).then(
+                    function () {
+                        window.location.reload();
+                    },
+                    function (dismiss) {
+                        if (dismiss === 'timer') {
+                            console.log('I was closed by the timer')
+                        }
+                    }
+                )
+            }
+        }
+    })
+
+}
+function deleteRead() {
+    $.ajax({
+        type: "GET",
+        url: "/deleteRead",
+        data:{},
+        success:function (response) {
+            if(response.code==200){
+                swal({
+                    title: '操作成功',
+                    text: '操作成功',
+                    icon: 'success',
+                    timer: 2000
+                }).then(
+                    function () {
+                        window.location.reload();
+                    },
+                    function (dismiss) {
+                        if (dismiss === 'timer') {
+                            console.log('I was closed by the timer')
+                        }
+                    }
+                )
+            }
+        }
+    })
+
+}
