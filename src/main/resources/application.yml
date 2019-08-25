@@ -1,8 +1,8 @@
 server:
   port: 8887
-client_id: Iv1.b9785368af06692f
-client_secret: ff05fe28f0287463020a18bfd43313639dd63e6b
-Redirect_uri: http://localhost:8887/callback
+client_id: xxxxxxxxxxxxxxxxxx
+client_secret: xxxxxxxxxxxxxxxxxxxxx
+Redirect_uri: xxxxxxxxxxxxxxxxxxxxxx
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/community?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
@@ -12,10 +12,10 @@ spring:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
-endpoint: http://oss-cn-beijing.aliyuncs.com
-accessKeyId: LTAIlAHWpVWuoRQH
-accessKeySecret: Zg6oKK5WFdMiN8IEmKPAUWAvGUxfzG
-bucketName: shuixin
+endpoint: xxxxxxxxxxxxxxxxxxxxxx
+accessKeyId: xxxxxxxxxxxxxxxxxxx
+accessKeySecret: xxxxxxxxxxxxxxxxx
+bucketName: xxxxxxxxxxxxxx
 
 logging:
   file: logs/community.log
