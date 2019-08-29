@@ -206,6 +206,21 @@ function likeQuestion(e){
                             }
                         }
                     )
+                } else if(response.code==2020){
+                    swal({
+                        title: response.message,
+                        text: response.message,
+                        icon: 'warning',
+                        timer: 2000
+                    }).then(
+                        function () {
+                        },
+                        function (dismiss) {
+                            if (dismiss === 'timer') {
+                                console.log('I was closed by the timer')
+                            }
+                        }
+                    )
                 }
 
             }
@@ -266,6 +281,21 @@ function likeComment(e){
 
                 }
                 else if(response.code==2003){
+                    swal({
+                        title: response.message,
+                        text: response.message,
+                        icon: 'warning',
+                        timer: 2000
+                    }).then(
+                        function () {
+                        },
+                        function (dismiss) {
+                            if (dismiss === 'timer') {
+                                console.log('I was closed by the timer')
+                            }
+                        }
+                    )
+                }else if(response.code==2020){
                     swal({
                         title: response.message,
                         text: response.message,

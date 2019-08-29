@@ -9,8 +9,10 @@ import life.lv.community.exception.CustomizeException;
 import life.lv.community.mapper.NotificationMapper;
 import life.lv.community.mapper.UserMapper;
 import life.lv.community.model.Notification;
+import life.lv.community.model.NotificationExample;
 import life.lv.community.model.User;
 import life.lv.community.service.NotificationService;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,10 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public PageinationDTO listUser(Long userId, Integer page, Integer pageNum) {
         PageinationDTO pageinationDTO = new PageinationDTO();
-        Integer totalUserCount=notificationMapper.countUser(userId);
+        NotificationExample notificationExample = new NotificationExample();
+        notificationExample.createCriteria().andReceiverEqualTo(userId);
+        Integer totalUserCount= (int)notificationMapper.countByExample(notificationExample);
+        //Integer totalUserCount=notificationMapper.countUser(userId);
         //计算总页数
         Integer totalPage=totalUserCount%pageNum==0?totalUserCount/pageNum:totalUserCount/pageNum+1;
         if(page<1){
@@ -42,7 +47,11 @@ public class NotificationServiceImpl implements NotificationService {
         }
         pageinationDTO.setPageination(page,totalPage);
         Integer offset=pageNum*(page-1);
-        List<Notification> notificationList=notificationMapper.listUser(userId,offset,pageNum);
+        NotificationExample example = new NotificationExample();
+        example.createCriteria().andReceiverEqualTo(userId);
+        example.setOrderByClause("gmt_create desc");
+        List<Notification> notificationList = notificationMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, pageNum));
+        //List<Notification> notificationList=notificationMapper.listUser(userId,offset,pageNum);
         List<NotificationDTO> notificationDTOList=new ArrayList<>();
 
         if (notificationList.size() == 0) {
@@ -62,7 +71,11 @@ public class NotificationServiceImpl implements NotificationService {
     //记录通知数
     @Override
     public Long unReadCount(Long userId) {
-        Long unReadCount=notificationMapper.unReadCount(userId, NotificationStatusEnum.UNREAD.getStatus());
+        NotificationExample example = new NotificationExample();
+        example.createCriteria().andReceiverEqualTo(userId)
+                .andStatusEqualTo(NotificationStatusEnum.UNREAD.getStatus());
+        long unReadCount = notificationMapper.countByExample(example);
+        //Long unReadCount=notificationMapper.unReadCount(userId, NotificationStatusEnum.UNREAD.getStatus());
         return unReadCount;
     }
 
@@ -70,7 +83,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public NotificationDTO read(Long id, User user) {
-        Notification notification = notificationMapper.selectById(id);
+        Notification notification = notificationMapper.selectByPrimaryKey(id);
+        //Notification notification = notificationMapper.selectById(id);
         if (notification == null) {
             throw new CustomizeException(CustomizeErrorCode.NOTIFICATION_NOT_FOUND);
         }
@@ -79,8 +93,8 @@ public class NotificationServiceImpl implements NotificationService {
         }
 
         notification.setStatus(NotificationStatusEnum.READ.getStatus());
-        notificationMapper.updateStatus(notification);
-
+        notificationMapper.updateByPrimaryKey(notification);
+        //notificationMapper.updateStatus(notification);
         NotificationDTO notificationDTO = new NotificationDTO();
         BeanUtils.copyProperties(notification, notificationDTO);
         notificationDTO.setTypeName(NotificationTypeEnum.nameOfType(notification.getType()));
@@ -90,15 +104,18 @@ public class NotificationServiceImpl implements NotificationService {
     public void readAll(User user) {
         Notification notification=new Notification();
         notification.setStatus(NotificationStatusEnum.READ.getStatus());
-        notification.setReceiver(user.getId());
-        notificationMapper.updateStatusByReceiver(notification);
+        NotificationExample example = new NotificationExample();
+        example.createCriteria().andReceiverEqualTo(user.getId());
+        notificationMapper.updateByExampleSelective(notification, example);
+        //notificationMapper.updateByExample(notification, example);
+
     }
 
     @Override
     public void deleteRead(User user) {
-        Notification notification=new Notification();
-        notification.setStatus(NotificationStatusEnum.READ.getStatus());
-        notification.setReceiver(user.getId());
-        notificationMapper.deleteStatusByReceiver(notification);
+        NotificationExample example = new NotificationExample();
+        example.createCriteria().andReceiverEqualTo(user.getId())
+                .andStatusEqualTo(NotificationStatusEnum.READ.getStatus());
+        notificationMapper.deleteByExample(example);
     }
 }

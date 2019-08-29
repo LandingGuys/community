@@ -3,6 +3,7 @@ package life.lv.community.controller;
 import life.lv.community.VO.FileVO;
 import life.lv.community.mapper.UserMapper;
 import life.lv.community.model.User;
+import life.lv.community.model.UserExample;
 import life.lv.community.provider.AliYunProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +48,12 @@ public class FileController {
     public String updateImage(@RequestParam("id") long id, @RequestParam("uploadpic") MultipartFile file) {
         try {
             String fileName= aliYunProvider.upload(file.getInputStream(),file.getOriginalFilename());
-            User user=userMapper.findById(id);
+            User dbUser = userMapper.selectByPrimaryKey(id);
+            User user = new User();
             user.setAvatarUrl(fileName);
-            userMapper.update(user);
-
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andIdEqualTo(dbUser.getId());
+            userMapper.updateByExampleSelective(user, userExample);
         } catch (IOException e) {
             e.printStackTrace();
         }

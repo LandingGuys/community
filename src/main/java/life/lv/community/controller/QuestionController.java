@@ -55,28 +55,37 @@ public class QuestionController {
         if(user == null){
             return ResultVoUtil.error(CustomizeErrorCode.NO_LOGIN.getCode(),CustomizeErrorCode.NO_LOGIN.getMessage());
         }
-        Question dbQuestion=questionMapper.getById(id);
+        Question dbQuestion = questionMapper.selectByPrimaryKey(id);
+        //Question dbQuestion=questionMapper.getById(id);
         if(dbQuestion==null){
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
         }
         if(user.getId()!=dbQuestion.getCreator()){
-            questionService.incLike(id);
-            //通知
-            Notification notification = new Notification();
-            notification.setGmtCreate(System.currentTimeMillis());
-            notification.setType(NotificationTypeEnum.LIKE_QUESTION.getType());
-            notification.setOuterid(id);
-            notification.setNotifier(user.getId());
-            notification.setReceiver(dbQuestion.getCreator());
-            notification.setNotifierName(user.getName());
-            notification.setOuterTitle(dbQuestion.getTitle());
-            notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
-            notificationMapper.create(notification);
+
+            String res=questionService.incLike(id,user.getId());
+            if("success".equals(res)){
+                //通知
+                Notification notification = new Notification();
+                notification.setGmtCreate(System.currentTimeMillis());
+                notification.setType(NotificationTypeEnum.LIKE_QUESTION.getType());
+                notification.setOuterid(id);
+                notification.setNotifier(user.getId());
+                notification.setReceiver(dbQuestion.getCreator());
+                notification.setNotifierName(user.getName());
+                notification.setOuterTitle(dbQuestion.getTitle());
+                notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+                notificationMapper.insertSelective(notification);
+            }else{
+                return ResultVoUtil.error(CustomizeErrorCode.REPEAT_LIKE.getCode(),CustomizeErrorCode.REPEAT_LIKE.getMessage());
+            }
+
+            //notificationMapper.create(notification);
 
         }else{
             return ResultVoUtil.error(CustomizeErrorCode.CANT_LIKE_YOURSELF_QUESTION.getCode(),CustomizeErrorCode.CANT_LIKE_YOURSELF_QUESTION.getMessage());
         }
-        Question likeQuestion =questionMapper.getById(id);
+        Question likeQuestion =questionMapper.selectByPrimaryKey(id);
+        //Question likeQuestion =questionMapper.getById(id);
         LikeVO likeVO=new LikeVO();
         likeVO.setLikeCount(likeQuestion.getLikeCount());
         return ResultVoUtil.success(likeVO);

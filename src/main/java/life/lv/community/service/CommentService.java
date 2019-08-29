@@ -11,4 +11,6 @@ public interface CommentService {
     void insert(Comment comment, User commentator);
 
     List<CommentDTO> listByQuestionId(Long id,Integer type);
+
+    String incLike(long id, Long userId);
 }

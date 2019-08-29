@@ -22,7 +22,8 @@ public enum CustomizeErrorCode {
     DESCRIPTION_IS_EMPTY(2016,"问题内容不能为空~"),
     TAG_IS_EMPTY(2017,"问题标签不能为空~"),
     TAG_IS_WRONGFUL(2018,"标签不合法"),
-    CANT_LIKE_YOURSELF_QUESTION(2019,"兄dei不可以给自己点赞哦！" )
+    CANT_LIKE_YOURSELF_QUESTION(2019,"兄dei不可以给自己点赞哦！" ),
+    REPEAT_LIKE(2020,"兄dei你已经点过了！"),
     ;
     private Integer code;
     private String message;

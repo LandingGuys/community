@@ -4,12 +4,16 @@ import life.lv.community.dto.PageinationDTO;
 import life.lv.community.dto.QuestionDTO;
 import life.lv.community.exception.CustomizeErrorCode;
 import life.lv.community.exception.CustomizeException;
+import life.lv.community.mapper.QuestionExtMapper;
 import life.lv.community.mapper.QuestionMapper;
 import life.lv.community.mapper.UserMapper;
 import life.lv.community.model.Question;
+import life.lv.community.model.QuestionExample;
+import life.lv.community.model.QuestionWithBLOBs;
 import life.lv.community.model.User;
 import life.lv.community.service.QuestionService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
 
     @Autowired
     private QuestionMapper questionMapper;
@@ -29,11 +35,13 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public QuestionDTO getById(Long id) {
-        Question question=questionMapper.getById(id);
+        Question question=questionMapper.selectByPrimaryKey(id);
+        //Question question=questionMapper.getById(id);
         if(question==null){
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
         }
-        User user=userMapper.findById(question.getCreator());
+        User user=userMapper.selectByPrimaryKey(question.getCreator());
+        //User user=userMapper.findById(question.getCreator());
         QuestionDTO questionDTO=new QuestionDTO();
         BeanUtils.copyProperties(question,questionDTO);
         questionDTO.setUser(user);
@@ -43,10 +51,17 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public PageinationDTO listUser(Long userId, Integer page, Integer pageNum) {
         PageinationDTO pageinationDTO = new PageinationDTO();
-        Integer totalUserCount=questionMapper.countUser(userId);
         //计算总页数
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.createCriteria().andCreatorEqualTo(userId);
+        Integer totalUserCount= (int)questionMapper.countByExample(questionExample);
+
         Integer offset = getInteger(page, pageNum, pageinationDTO, totalUserCount);
-        List<Question> questionList=questionMapper.listUser(userId,offset,pageNum);
+        QuestionExample example = new QuestionExample();
+        example.createCriteria().andCreatorEqualTo(userId);
+        example.setOrderByClause("gmt_create desc");
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, pageNum));
+        //List<Question> questionList=questionMapper.listUser(userId,offset,pageNum);
         forQuestionDTO(pageinationDTO, questionList);
         return pageinationDTO;
     }
@@ -57,17 +72,20 @@ public class QuestionServiceImpl implements QuestionService {
         if(StringUtils.isNotBlank(search)){
             String[] tags=StringUtils.split(search," ");
             search= Arrays.stream(tags).collect(Collectors.joining("|"));
-            Integer totalCount=questionMapper.countBySearch(search);
+            Integer totalCount=questionExtMapper.countBySearch(search);
             //计算总页数
             Integer offset = getInteger(page, pageNum, pageinationDTO, totalCount);
-            List<Question> questionList=questionMapper.questionBySearchList(search,offset,pageNum);
+            List<Question> questionList=questionExtMapper.questionBySearchList(search,offset,pageNum);
             forQuestionDTO(pageinationDTO, questionList);
             return pageinationDTO;
         }else{
-            Integer totalCount=questionMapper.count();
+            Integer totalCount=(int)questionMapper.countByExample(new QuestionExample());
             //计算总页数
             Integer offset = getInteger(page, pageNum, pageinationDTO, totalCount);
-            List<Question> questionList=questionMapper.list(offset,pageNum);
+            QuestionExample questionExample = new QuestionExample();
+            questionExample.setOrderByClause("gmt_create desc");
+            List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, pageNum));
+            //List<Question> questionList=questionMapper.list(offset,pageNum);
             forQuestionDTO(pageinationDTO, questionList);
             return pageinationDTO;
         }
@@ -76,7 +94,8 @@ public class QuestionServiceImpl implements QuestionService {
     private void forQuestionDTO(PageinationDTO pageinationDTO, List<Question> questionList) {
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questionList) {
-            User user = userMapper.findById(question.getCreator());
+            User user = userMapper.selectByPrimaryKey(question.getCreator());
+            //User user = userMapper.findById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question, questionDTO);
             questionDTO.setUser(user);
@@ -97,20 +116,38 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public void createOrUpdate(Question question) {
-        Question dbQuestion=questionMapper.getById(question.getId());
-        if(dbQuestion==null){
+    public void createOrUpdate(QuestionWithBLOBs question) {
+
+        if(question.getId()==null){
             //插入
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
-            questionMapper.create(question);
+            question.setViewCount(0);
+            question.setLikeCount(0);
+            question.setCommentCount(0);
+            questionMapper.insert((QuestionWithBLOBs)question);
+            //questionMapper.insertSelective(question);
+           // questionMapper.create(question);
         }else{
             //更新
-            dbQuestion.setGmtModified(System.currentTimeMillis());
-            dbQuestion.setTitle(question.getTitle());
-            dbQuestion.setDescription(question.getDescription());
-            dbQuestion.setTag(question.getTag());
-            Integer update=questionMapper.update(dbQuestion);
+            Question dbQuestion = questionMapper.selectByPrimaryKey(question.getId());
+            if(dbQuestion==null){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
+            if(dbQuestion.getCreator().longValue()!=question.getCreator().longValue()){
+                throw new CustomizeException(CustomizeErrorCode.INVALID_OPERATION);
+            }
+            QuestionWithBLOBs updateQuestion = new QuestionWithBLOBs();
+            updateQuestion.setGmtModified(System.currentTimeMillis());
+            updateQuestion.setTitle(question.getTitle());
+            updateQuestion.setDescription(question.getDescription());
+            updateQuestion.setTag(question.getTag());
+            updateQuestion.setId(question.getId());
+            QuestionExample questionExample = new QuestionExample();
+            questionExample.createCriteria().andIdEqualTo(dbQuestion.getId());
+            int update = questionMapper.updateByExampleSelective(updateQuestion, questionExample);
+            //int update = questionMapper.updateByExample(updateQuestion, questionExample);
+            //Integer update=questionMapper.update(dbQuestion);
             if(update!=1){
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
@@ -119,14 +156,25 @@ public class QuestionServiceImpl implements QuestionService {
     }
     @Override
     public void incView(Long id) {
-        Question question = questionMapper.getById(id);
-        questionMapper.updateView(question);
+        Question question =questionMapper.selectByPrimaryKey(id);
+        questionExtMapper.incQuestionView(question);
     }
 
     @Override
-    public void incLike(long id) {
-        Question question = questionMapper.getById(id);
-        questionMapper.updateLike(question);
+    public String incLike(long id,long userId) {
+        Question dbQuestion =questionMapper.selectByPrimaryKey(id);
+        if( StringUtils.isBlank(((QuestionWithBLOBs) dbQuestion).getLikeUsed()) ||!((QuestionWithBLOBs) dbQuestion).getLikeUsed().contains(userId+",")){
+            QuestionWithBLOBs question = new QuestionWithBLOBs();
+            question.setLikeUsed(userId+",");
+            QuestionExample example = new QuestionExample();
+            example.createCriteria().andIdEqualTo(dbQuestion.getId());
+            questionMapper.updateByExampleSelective(question, example);
+            questionExtMapper.incQuestionLike(dbQuestion);
+            return "success";
+        }else{
+            return "error";
+        }
+
     }
 
     @Override
@@ -138,7 +186,7 @@ public class QuestionServiceImpl implements QuestionService {
         Question question = new Question();
         question.setId(questionDTO.getId());
         question.setTag(regexTag);
-        List<Question> questionList=questionMapper.questionByTagList(question);
+        List<Question> questionList=questionExtMapper.questionByTagList(question);
         List<QuestionDTO> questionDTOS=questionList.stream().map(q -> {
             QuestionDTO questions = new QuestionDTO();
             BeanUtils.copyProperties(q, questions);

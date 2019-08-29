@@ -40,7 +40,8 @@ public class NotificationController {
         }else if(NotificationTypeEnum.REPLY_COMMENT.getType() == notificationDTO.getType()
                 || NotificationTypeEnum.LIKE_COMMENT.getType()==notificationDTO.getType()
         ){
-            Comment dbComment=commentMapper.selectParentId(notificationDTO.getOuterid());
+            Comment dbComment= commentMapper.selectByPrimaryKey(notificationDTO.getOuterid());
+            //Comment dbComment=commentMapper.selectParentId(notificationDTO.getOuterid());
             return "redirect:/question/" + dbComment.getParentId();
         }
         else {
