@@ -27,6 +27,25 @@
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <h3><span class="glyphicon glyphicon-list" aria-hidden="true"></span> 发现</h3>
             <hr>
+            <ul class="nav nav-tabs">
+                <li role="presentation" th:class="${sort == 'new' || sort == '' ? 'active':''}">
+                    <a th:href="@{/(sort='new')}">最新</a>
+                </li>
+                <li role="presentation" th:class="${sort == 'hot30' ? 'active':''}">
+                    <a th:href="@{/(sort='hot30')}">30天最热</a>
+                </li>
+                <li role="presentation" th:class="${sort == 'hot7' ? 'active':''}">
+                    <a th:href="@{/(sort='hot7')}">7天最热</a>
+                </li>
+                <li role="presentation" th:class="${sort == 'hot' ? 'active':''}">
+                    <a th:href="@{/(sort='hot')}">最热</a>
+                </li>
+                <li role="presentation" th:class="${sort == 'no' ? 'active':''}">
+                    <a th:href="@{/(sort='no')}" class="red">消灭零回复</a>
+                </li>
+            </ul>
+
+
             <ul class="media-list">
                 <div class="media" th:each="question : ${pageination.data}">
                     <div class="media-left">
@@ -45,11 +64,11 @@
             <div class="mod-footer">
                 <div class="page-control">
                     <ul class="pagination pull-right">
-                        <li><a href="" th:if="${pageination.showFirstPage}" th:href="@{/(page=1,search=${search})}">&lt;&lt;</a></li>
-                        <li><a th:href="@{/(page=${pageination.page - 1},search=${search})}" th:if="${pageination.showPrePage}">&lt;</a></li>
-                        <li th:class="${pageination.page==page?'active':''}" th:each="page:${pageination.pages}"><a href="" th:href="@{/(page=${page},search=${search})}"  th:text="${page}"></a></li>
-                        <li><a th:href="@{/(page=${pageination.page + 1},search=${search})}" th:if="${pageination.showNextPage}">&gt;</a></li>
-                        <li><a th:href="@{/(page=${pageination.totalPage},search=${search})}" th:if="${pageination.showEndPage}">&gt;&gt;</a></li>
+                        <li><a href="" th:if="${pageination.showFirstPage}" th:href="@{/(page=1,search=${search},tag=${tag},sort=${sort})}">&lt;&lt;</a></li>
+                        <li><a th:href="@{/(page=${pageination.page - 1},search=${search},tag=${tag},sort=${sort})}" th:if="${pageination.showPrePage}">&lt;</a></li>
+                        <li th:class="${pageination.page==page?'active':''}" th:each="page:${pageination.pages}"><a href="" th:href="@{/(page=${page},search=${search},tag=${tag},sort=${sort})}"  th:text="${page}"></a></li>
+                        <li><a th:href="@{/(page=${pageination.page + 1},search=${search},tag=${tag},sort=${sort})}" th:if="${pageination.showNextPage}">&gt;</a></li>
+                        <li><a th:href="@{/(page=${pageination.totalPage},search=${search},tag=${tag},sort=${sort})}" th:if="${pageination.showEndPage}">&gt;&gt;</a></li>
                     </ul>
                 </div>
             </div>
@@ -57,14 +76,29 @@
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h3>欢迎光临</h3>
+                <!-- weather -->
+                <div id="weather-view-he"></div>
+                <script>
+                    WIDGET = {ID: 'CbuOfPDgrP'};
+                </script>
+                <script type="text/javascript" src="https://apip.weatherdt.com/view/static/js/r.js?v=1111"></script>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <h3>站长微信</h3>
                 <h5>要啥微信？没有！！！但是站长是个逼粉。</h5>
                 <img src="/img/我爱南京.jpg" alt="" class="img-thumbnail" style="width: 100%; height:260px;margin:10px 0">
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <h3>热门标签</h3>
-                <h5>还没写，暂时也放张图叭！</h5>
-                <img src="/img/daka.jpg" alt="" class="img-thumbnail" style="width: 100%;margin:10px 0">
+                <ul class="question-related">
+                    <li th:each="tag : ${tags}">
+                        <a th:href="@{/(page=1,search=${search},tag=${tag},sort=${sort})}" th:text="${tag}"></a>
+                    </li>
+                </ul>
+
+                <!--<h5>还没写，暂时也放张图叭！</h5>-->
+                <!--<img src="/img/daka.jpg" alt="" class="img-thumbnail" style="width: 100%;margin:10px 0">-->
             </div>
         </div>
     </div>

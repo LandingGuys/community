@@ -1,7 +1,7 @@
 package life.lv.community.mapper;
 
+import life.lv.community.dto.QuestionQueryDTO;
 import life.lv.community.model.Question;
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -18,12 +18,10 @@ public interface QuestionExtMapper {
     @Update("update question set like_count=like_count+1 where id=#{id}")
     void incQuestionLike(Question question);
 
-    @Select("select count(*) from question where title REGEXP #{search}")
-    Integer countBySearch(@Param(value = "search") String search);
-
-    @Select("select * from question where title REGEXP #{search} order by gmt_create desc limit #{offset},#{pageNum}")
-    List<Question> questionBySearchList(@Param("search") String search, @Param(value = "offset") Integer offset, @Param("pageNum") Integer pageNum);
-
     @Select("select * from question where tag REGEXP #{tag} and id!=#{id}")
     List<Question> questionByTagList(Question question);
+
+    Integer countBySearch(QuestionQueryDTO questionQueryDTO);
+
+    List<Question> selectBySearch(QuestionQueryDTO questionQueryDTO);
 }

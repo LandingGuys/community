@@ -2,6 +2,8 @@ package life.lv.community.service.impl;
 
 import life.lv.community.dto.PageinationDTO;
 import life.lv.community.dto.QuestionDTO;
+import life.lv.community.dto.QuestionQueryDTO;
+import life.lv.community.enums.SortEnum;
 import life.lv.community.exception.CustomizeErrorCode;
 import life.lv.community.exception.CustomizeException;
 import life.lv.community.mapper.QuestionExtMapper;
@@ -67,28 +69,45 @@ public class QuestionServiceImpl implements QuestionService {
     }
     //所有问题(加search)
     @Override
-    public PageinationDTO list(String search,Integer page, Integer pageNum) {
+    public PageinationDTO list(String search,String tag,String sort,Integer page, Integer pageNum) {
         PageinationDTO pageinationDTO = new PageinationDTO();
-        if(StringUtils.isNotBlank(search)){
-            String[] tags=StringUtils.split(search," ");
-            search= Arrays.stream(tags).collect(Collectors.joining("|"));
-            Integer totalCount=questionExtMapper.countBySearch(search);
-            //计算总页数
-            Integer offset = getInteger(page, pageNum, pageinationDTO, totalCount);
-            List<Question> questionList=questionExtMapper.questionBySearchList(search,offset,pageNum);
-            forQuestionDTO(pageinationDTO, questionList);
-            return pageinationDTO;
-        }else{
-            Integer totalCount=(int)questionMapper.countByExample(new QuestionExample());
-            //计算总页数
-            Integer offset = getInteger(page, pageNum, pageinationDTO, totalCount);
-            QuestionExample questionExample = new QuestionExample();
-            questionExample.setOrderByClause("gmt_create desc");
-            List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, pageNum));
-            //List<Question> questionList=questionMapper.list(offset,pageNum);
-            forQuestionDTO(pageinationDTO, questionList);
-            return pageinationDTO;
+        if(StringUtils.isNotBlank(search)) {
+            String[] tags = StringUtils.split(search, " ");
+            search = Arrays.stream(tags)
+                    .filter(StringUtils::isNotBlank)
+                    .map(t -> t.replace("+", "").replace("*", "").replace("?", ""))
+                    .filter(StringUtils::isNotBlank)
+                    .collect(Collectors.joining("|"));
         }
+        Integer totalPage;
+        QuestionQueryDTO questionQueryDTO=new QuestionQueryDTO();
+        questionQueryDTO.setSearch(search);
+        if(StringUtils.isNotBlank(tag)){
+            tag = tag.replace("+", "").replace("*", "").replace("?", "");
+            questionQueryDTO.setTag(tag);
+        }
+
+        for (SortEnum sortEnum : SortEnum.values()) {
+            if (sortEnum.name().toLowerCase().equals(sort)) {
+                questionQueryDTO.setSort(sort);
+
+                if (sortEnum == SortEnum.HOT7) {
+                    questionQueryDTO.setTime(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 7);
+                }
+                if (sortEnum == SortEnum.HOT30) {
+                    questionQueryDTO.setTime(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30);
+                }
+                break;
+            }
+        }
+        Integer totalCount=questionExtMapper.countBySearch(questionQueryDTO);
+            //计算总页数
+        Integer offset = getInteger(page, pageNum, pageinationDTO, totalCount);
+        questionQueryDTO.setSize(pageNum);
+        questionQueryDTO.setPage(offset);
+        List<Question> questionList=questionExtMapper.selectBySearch(questionQueryDTO);
+        forQuestionDTO(pageinationDTO, questionList);
+        return pageinationDTO;
     }
 
     private void forQuestionDTO(PageinationDTO pageinationDTO, List<Question> questionList) {

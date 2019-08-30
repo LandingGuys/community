@@ -7,7 +7,7 @@ import life.lv.community.model.QuestionWithBLOBs;
 import java.util.List;
 
 public interface QuestionService {
-    public PageinationDTO list(String search,Integer page, Integer pageNum);
+    public PageinationDTO list(String search,String tag,String sort,Integer page, Integer pageNum);
 
     public PageinationDTO listUser(Long id, Integer page, Integer pageNum);
 
