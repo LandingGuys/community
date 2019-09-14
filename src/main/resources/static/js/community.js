@@ -458,3 +458,21 @@ function deleteRead() {
     })
 
 }
+function repeatName() {
+    //var username = document.getElementsByName('username')[0].value;
+    var username=$("#username").val();
+    $.ajax({
+        type: "GET",
+        url: "/repeatName",
+        data:{
+            "username":username
+        },
+        success: function (response) {
+            var html="";
+            html+="<span>"+response+"</span>";
+            $("#msg").html(html);
+        }
+    })
+    
+    
+}

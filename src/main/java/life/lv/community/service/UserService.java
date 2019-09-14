@@ -4,6 +4,11 @@ import life.lv.community.model.User;
 
 public interface UserService {
 
-   public void createOrUpdate(User user);
-   public void updateUser(User user);
+    void createOrUpdate(User user);
+    void updateUser(User user);
+
+    boolean findByName(String username);
+
+    void register(User user);
+    boolean login(User user);
 }

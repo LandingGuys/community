@@ -42,6 +42,7 @@ public class AliYunProvider {
             ossClient.createBucket(bucketName);
         }
         ossClient.putObject(bucketName, objectName, fileStream);
+        
         Date expiration =new Date(new Date().getTime() + 3600 * 1000*24*365*10);
         URL url=ossClient.generatePresignedUrl(bucketName,objectName,expiration);
         ossClient.shutdown();

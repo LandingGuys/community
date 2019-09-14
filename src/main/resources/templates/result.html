@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<strong>注册成功</strong>
+<a  class="alert-link">3s后将自动跳转</a>
+</body>
+<script th:inline="javascript">
+    var url="login.html";
+    setTimeout('location.href=url', 3000);
+</script>
+</html>
