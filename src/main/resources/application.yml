@@ -34,10 +34,10 @@ mybatis:
   type-aliases-package: life.lv.community.model
   mapper-locations: classpath:mapper/*.xml
 
-endpoint: http://oss-cn-beijing.aliyuncs.com
-accessKeyId: LTAIlAHWpVWuoRQH
-accessKeySecret: Zg6oKK5WFdMiN8IEmKPAUWAvGUxfzG
-bucketName: shuixin
+endpoint: ***************
+accessKeyId: ***********
+accessKeySecret: **************
+bucketName: *****
 
 logging:
   file: logs/community.log
