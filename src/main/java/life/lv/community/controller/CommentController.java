@@ -38,6 +38,12 @@ public class CommentController {
     @Autowired
     private QuestionService questionService;
 
+    /**
+     * 评论
+     * @param commetCreateDTO
+     * @param request
+     * @return
+     */
     @PostMapping("/comment")
     public Object post(@RequestBody CommetCreateDTO commetCreateDTO,
                        HttpServletRequest request){
@@ -65,6 +71,13 @@ public class CommentController {
         List<CommentDTO> commentDTOList=commentService.listByQuestionId(id, CommentTypeEnum.COMMENT.getType());
         return ResultVoUtil.success(commentDTOList);
     }
+
+    /**
+     * 点赞评论
+     * @param id
+     * @param request
+     * @return
+     */
     @ResponseBody()
     @PostMapping("/likeComment")
     public Object likeComment(@RequestParam("id") long id,
