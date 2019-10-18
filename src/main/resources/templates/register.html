@@ -12,8 +12,9 @@
     <!-- Custom styles for this template -->
     <link href="css/signin.css" rel="stylesheet">
     <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.min.js" type="application/javascript"></script>
     <script src="/js/community.js"></script>
-
+    <script src="/js/sweetalert.min.js"></script>
 
 
 </head>
@@ -28,6 +29,10 @@
     <label class="sr-only">Password</label>
     <input type="password" name="password" class="form-control" th:placeholder="#{register.password}" placeholder="Password" required="">
     <p th:if="${not #strings.isEmpty(msg)}" th:text="${msg}" style="color: red"></p>
+
+    <label class="sr-only">验证码</label>
+    <input type="text" name="emailYan" id="emailYan" class="form-control"  placeholder="验证码" style="width: 150px;">
+    <button class="btn btn-lg btn-primary btn-block"  type="button" style="float:right;width: 120px;margin-top: -46px;font-size: unset" onclick="emailYanZheng()"><span id="code-btn" style="font-size: 12px">获取验证码</span></button>
     <button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{register.btn}">注册</button>
     <p class="mt-5 mb-3 text-muted">© 2019-2020</p>
     <a class="btn btn-sm" th:href="@{/register.html(l='zh_CN')}">中文</a>

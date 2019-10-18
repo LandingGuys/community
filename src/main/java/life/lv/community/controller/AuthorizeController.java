@@ -7,10 +7,14 @@ import life.lv.community.provider.GithubProvider;
 import life.lv.community.provider.QQProvider;
 import life.lv.community.service.UserService;
 import life.lv.community.utils.MD5Util;
+import life.lv.community.utils.ResultVoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +22,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @Slf4j
@@ -32,6 +39,10 @@ public class AuthorizeController {
     private GithubProvider githubProvider;
     @Autowired
     private BaiDuProvider baiDuProvider;
+    @Autowired
+    JavaMailSenderImpl javaMailSender;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 //    @Autowired
 //    private StringRedisTemplate redisTemplate;
 
@@ -213,7 +224,29 @@ public class AuthorizeController {
         }
         return null;
     }
+    @ResponseBody
+    @GetMapping("/emailYanZheng")
+    public Object email(@RequestParam("username") String username){
+        String reslut=String.valueOf((int)((Math.random()*9+1)*100000));
+        redisTemplate.opsForValue().set(username+"emailKey",reslut,15, TimeUnit.MINUTES);
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+        try {
+            helper.setSubject("欢迎使用天空之城社区，离完成就差一步了");
+            helper.setText("亲爱的用户：您好！感谢您使用天空之城社区服务。" +
+                    "您正在进行邮箱验证，请在验证码输入框中输入此次验证码："+"<b style='color:red'>"+reslut+"</b>"+
+                    " 请在15分钟内按页面提示提交验证码以完成验证，切勿将验证码泄露于他人。" +
+                    "如非本人操作，请忽略此邮件，由此给您带来的不便请您谅解！",true);
+            helper.setTo(username);
+            helper.setFrom("1176386463@qq.com");
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 
+        log.info("邮箱发送成功，验证码为"+reslut);
+        return ResultVoUtil.success(reslut);
+    }
     /**
      * 注册
      * @param username
@@ -224,25 +257,40 @@ public class AuthorizeController {
     @PostMapping("/register")
     public String register(@RequestParam("username") String username,
                            @RequestParam("password") String password,
+                           @RequestParam("emailYan") String emailYan,
                            Model model){
-            if(!StringUtils.isEmpty(username) &&!StringUtils.isEmpty(password)){
-                if(userService.findByName(username)){
-                    User user=new User();
-                    user.setAccountId(UUID.randomUUID().toString());
-                    user.setName(username);
-                    user.setPassword(MD5Util.md5(password));
-                    user.setAvatarUrl("https://shuixin.oss-cn-beijing.aliyuncs.com/tian.png");
-                    userService.register(user);
-                    return "result";
+        if(!StringUtils.isEmpty(username) &&!StringUtils.isEmpty(password) && !StringUtils.isEmpty(emailYan)){
+
+            if(redisTemplate.hasKey(username+"emailKey")){
+                if(emailYan.equals(redisTemplate.opsForValue().get(username+"emailKey"))){
+                    if(userService.findByName(username)){
+                        User user=new User();
+                        user.setAccountId(UUID.randomUUID().toString());
+                        user.setName(username);
+                        user.setPassword(MD5Util.md5(password));
+                        user.setAvatarUrl("https://shuixin.oss-cn-beijing.aliyuncs.com/tian.png");
+                        userService.register(user);
+                        return "result";
+                    }else{
+                        model.addAttribute("msg","用户名已存在");
+                        return "register";
+                    }
                 }else{
-                    model.addAttribute("msg","用户名已存在");
+                    model.addAttribute("msg","邮箱验证码错误");
                     return "register";
                 }
-
+            }else{
+                model.addAttribute("msg","验证码失效，请重新验证！");
+                return "register";
             }
-            return null;
-    }
 
+
+        }else{
+            model.addAttribute("msg","用户名或密码或邮箱验证码为空");
+            return "register";
+        }
+
+    }
     /**
      * 登录
      * @param username
