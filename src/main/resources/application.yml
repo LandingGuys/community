@@ -13,6 +13,10 @@ Baidu_client_id: 4G0yhXYY9S4saBpY1NaeIUQa
 Baidu_client_secret: Kw0XDu8aWuTLmb9bXdGVMiRzgq7TNCmV
 Baidu_Redirect_uri: http://localhost:8887/baiducallback
 
+#qq
+QQ_client_id: 101802971
+QQ_client_secret: 772adebaf15b637a2d2e6aed6081895f
+QQ_Redirect_uri: http://www.wast.club/qqcallback
 
 spring:
   datasource:
@@ -20,24 +24,32 @@ spring:
     username: root
     password: rjxy
     driver-class-name: com.mysql.jdbc.Driver
-#  redis:
-#    host: 47.95.146.87
-#    port: 6379
-#    password: 12345678
+  redis:
+    host: 106.75.109.78
+    port: 6379
+    password: 123456
   thymeleaf:
     cache: false
   messages:
     basename: i18n.message
+  # 邮箱
+  mail:
+    username: 1176386463@qq.com
+    password: hxwcxpbolmazibcc
+    host: smtp.qq.com
+
+
+
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
   type-aliases-package: life.lv.community.model
   mapper-locations: classpath:mapper/*.xml
 
-endpoint: ***************
-accessKeyId: ***********
-accessKeySecret: **************
-bucketName: *****
+endpoint: http://oss-cn-beijing.aliyuncs.com
+accessKeyId: LTAIlAHWpVWuoRQH
+accessKeySecret: Zg6oKK5WFdMiN8IEmKPAUWAvGUxfzG
+bucketName: shuixin
 
 logging:
   file: logs/community.log

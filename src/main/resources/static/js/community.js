@@ -476,3 +476,81 @@ function repeatName() {
     
     
 }
+function emailYanZheng() {
+    var username=$("#username").val();
+    var reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+    if(!username){
+        sweetAlert(
+            '邮箱用户名为空',
+            '出错了！',
+            'error'
+        )
+    }else{
+        if(reg.test(username)){
+            // swal({
+            //     title: '已发送邮件',
+            //     text: '发送成功',
+            //     icon: 'success',
+            //     timer: 2000
+            // }).then(
+            //     function () {},
+            //     // handling the promise rejection
+            //     function (dismiss) {
+            //         if (dismiss === 'timer') {
+            //             console.log('I was closed by the timer')
+            //         }
+            //     }
+            // )
+            //开始计时
+            var count = 60
+            $("#code-btn").attr('disabled','disabled');
+            $("#code-btn").html( count + "秒后重新发送");
+            var timer = setInterval(function(){
+                count--;
+                $("#code-btn").html(count + "秒后重新发送");
+                if (count==0) {
+                    clearInterval(timer);
+                    $("#code-btn").attr("disabled",false);//启用按钮
+                    $("#code-btn").html("获取验证码");
+                    $("#emailYan").html("") ;//清除验证码。如果不清除，过时间后，输入收到的验证码依然有效
+                }
+            },1000);
+
+            $.ajax({
+                type:"GET",
+                url:"/emailYanZheng",
+                data:{
+                    "username":username
+                },
+                success:function (response) {
+                    if(response.code==200){
+                        swal({
+                                title: '已发送邮件',
+                                text: '发送成功',
+                                icon: 'success',
+                                timer: 2000
+                            }).then(
+                                function () {},
+                                // handling the promise rejection
+                                function (dismiss) {
+                                    if (dismiss === 'timer') {
+                                        console.log('I was closed by the timer')
+                                    }
+                                }
+                            )
+                    }
+                }
+            })
+        }else{
+            sweetAlert(
+                '您输入的不是邮箱！',
+                '出错了！',
+                'error'
+            )
+        }
+    }
+
+
+
+
+}
