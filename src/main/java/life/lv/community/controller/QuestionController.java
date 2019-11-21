@@ -68,7 +68,7 @@ public class QuestionController {
                 Notification notification = new Notification();
                 notification.setGmtCreate(System.currentTimeMillis());
                 notification.setType(NotificationTypeEnum.LIKE_QUESTION.getType());
-                notification.setOuterid(id);
+                notification.setOuterId(id);
                 notification.setNotifier(user.getId());
                 notification.setReceiver(dbQuestion.getCreator());
                 notification.setNotifierName(user.getName());

@@ -1,0 +1,34 @@
+/*登录注册css*/
+.icon {
+    width: 1em; height: 1em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+    font-size:20px;
+    margin:5px 10px 5px 0px;
+}
+.modal-header {
+    background-color: #f3f3f3;
+    overflow: hidden;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    min-height: 16.42858px;
+}
+.login-modal .login-wrap .more-login-area {
+    margin-top: 30px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+}
+.login-modal .login-wrap .more-login-area .more-login-words {
+    position: absolute;
+    left: calc(50% - 52px);
+    top: -10px;
+    padding: 0 10px;
+    background: #fff;
+}
+.login-modal .login-wrap {
+    padding: 0 125px;
+}

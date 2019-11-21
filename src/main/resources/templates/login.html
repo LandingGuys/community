@@ -1,70 +1,142 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<meta name="description" content="">
-		<meta name="author" content="">
-		<title>Sign in</title>
-		<!-- Bootstrap core CSS -->
-		<link href="asserts/css/bootstrap.min.css"th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.css}"   rel="stylesheet">
-		<!-- Custom styles for this template -->
-		<link href="css/signin.css" rel="stylesheet">
-	</head>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Sign in</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/LR.css">
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="https://at.alicdn.com/t/font_1520101_sg7jt1gw5ns.js"></script>
+</head>
 
-	<body class="text-center">
-		<form class="form-signin" action="/login" method="post">
-			<img class="mb-4" src="/img/tian.svg" alt="" width="72" height="72">
-			<h1 class="h3 mb-3 font-weight-normal" th:text="#{login.tip}">Please sign in</h1>
-			<label class="sr-only">Username</label>
-			<input type="text" name="username" class="form-control" th:placeholder="#{login.username}" placeholder="Username" required="" autofocus="">
-			<label class="sr-only">Password</label>
-			<input type="password" name="password" class="form-control" th:placeholder="#{login.password}" placeholder="Password" required="">
-			<p th:if="${not #strings.isEmpty(msg)}" th:text="${msg}" style="color: red"></p>
-			<div class="checkbox mb-3">
-				<label>
-          		<input type="checkbox" value="remember-me"> [[#{login.remember}]]
-				</label>
-			</div>
-			<button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{login.btn}">Sign in</button>
-			<p class="mt-5 mb-3 text-muted">© 2019-2020</p>
-			<a class="btn btn-sm" th:href="@{/login.html(l='zh_CN')}">中文</a>
-			<a class="btn btn-sm" th:href="@{/login.html(l='en_US')}">English</a>
-			<br>
-			<br>
-			<a  href="/register.html" style="text-align: center">还没有帐户</a>
+<body>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">登录</h4>
+            </div>
+            <div class="modal-body">
+                <div class="sfModal-content">
+                    <div class="row bg-white login-modal">
+                        <div class="col-md-12 login-wrap">
+                            <form action="/login" method="POST" role="form" class="mt15">
+                                <div class="form-group hidden">
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            name="remember"
+                                            value="1"
+                                            autocomplete="off"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="username" class="control-label">手机号 或 Email</label>
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            name="username"
+                                            id="username"
+                                            tabindex="1"
+                                            required
+                                            placeholder="11 位手机号 或 Email"
+                                            autocomplete="off"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">密码</label>
+                                    <span class="pull-right">
+                                         <a href="/user/forgot" tabindex="4">忘记密码</a>
+                                     </span>
+                                    <input
+                                            type="password"
+                                            class="form-control"
+                                            name="password"
+                                            tabindex="2"
+                                            required
+                                            placeholder="请输入密码"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <a href="/user/phoneLogin" class="phoneLogin">手机验证码登录</a>
+                                </div>
+                                <div class="form-group clearfix">
+                                    <button
+                                            type="submit"
+                                            class="btn-block btn btn-primary pull-right pl20 pr20"
+                                            tabindex="3"
+                                            onclick="ga(&quot;send&quot;, &quot;event&quot;, &quot;email login button&quot;, &quot;clicked&quot;, &quot;login modal&quot;);"
+                                    >登录</button>
+                                </div>
+                            </form>
+                            <div class="text-muted text-center more-login-area">
+                                <span class="more-login-words">更多登录方式</span>
+                            </div>
+                            <div class="widget-login mb15 text-center">
 
-			<div style="margin-top: 20px;margin-left: -20px;">
+                                <a th:href="@{https://github.com/login/oauth/authorize(client_id='Iv1.b7d0686e97d9e912',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}">
+                                    <!-- <span class="iconfont icon-sn-github"></span> -->
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-sn-github"></use>
+                                    </svg>
+                                </a>
+                                <a th:href="@{https://graph.qq.com/oauth2.0/authorize(response_type='code',client_id='101802971',redirect_uri='http://www.wast.club/qqcallback',state=1)}">
 
-				<div class="col-md-4" style=" float:left">
-					<a th:href="@{https://github.com/login/oauth/authorize(client_id='Iv1.b7d0686e97d9e912',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}">
-						<img th:src="@{/img/github.svg}" alt="" width="36" height="36">
-						<p style="font-size: 12px">github
-							<br>登录
-						</p>
-					</a>
-				</div>
-				<div class="col-md-4" style="float: left">
-					<a th:href="@{https://graph.qq.com/oauth2.0/authorize(response_type='code',client_id='101802971',redirect_uri='http://www.wast.club/qqcallback',state=1)}">
-						<img th:src="@{/img/qq.svg}" alt="" width="36" height="36">
-						<p style="font-size: 12px">QQ
-							<br>登录
-						</p>
-					</a>
-				</div>
-				<div class="col-md-4" style="float: left">
-					<a th:href="@{https://openapi.baidu.com/oauth/2.0/authorize(response_type='code',client_id='9LuOVa1xvTbgkNdQvYIBgdIM',redirect_uri='http://www.wast.club/baiducallback',display='popup')}">
-						<img th:src="@{/img/baidu.svg}" alt="" width="36" height="36">
-						<p style="font-size: 12px">百度
-							<br>登录
-						</p>
-					</a>
-				</div>
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-sn-qq"></use>
+                                    </svg>
+                                </a>
+                                <a href="/user/oauth/weixin">
+
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-sn-weixin"></use>
+                                    </svg>
+                                </a>
+                                <a th:href="@{https://openapi.baidu.com/oauth/2.0/authorize(response_type='code',client_id='9LuOVa1xvTbgkNdQvYIBgdIM',redirect_uri='http://www.wast.club/baiducallback',display='popup')}">
+
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-sn-baidu"></use>
+                                    </svg>
+                                </a>
+                                <a href="/user/oauth/weibo">
+
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-sn-weibo"></use>
+                                    </svg>
+                                </a>
 
 
-			</div>
-		</form>
 
-	</body>
+                            </div>
+                            <div class="form-group clearfix">
+                                <a
+                                        class="btn-block btn btn-default pull-right pl20 pr20 SFLogin"
+                                        onclick="ga(&quot;send&quot;, &quot;event&quot;, &quot;email login button&quot;, &quot;clicked&quot;, &quot;login modal&quot;);"
+                                >注册新账号</a>
+                            </div>
+                            <p class="text-muted text-center mb15">
+                                继续即表示你同意
+                                <a href="/tos" target="_blank">《服务条款》</a>和
+                                <a href="/privacy" target="_blank">《隐私政策》</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer hidden"></div>
+        </div>
+    </div>
 
+
+
+
+</body>
 </html>

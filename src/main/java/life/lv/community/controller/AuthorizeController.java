@@ -226,26 +226,26 @@ public class AuthorizeController {
     }
     @ResponseBody
     @GetMapping("/emailYanZheng")
-    public Object email(@RequestParam("username") String username){
-        String reslut=String.valueOf((int)((Math.random()*9+1)*100000));
-        redisTemplate.opsForValue().set(username+"emailKey",reslut,15, TimeUnit.MINUTES);
+    public Object email(@RequestParam("mail") String mail){
+        String result=String.valueOf((int)((Math.random()*9+1)*100000));
+        redisTemplate.opsForValue().set(mail+"emailKey",result,15, TimeUnit.MINUTES);
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
         try {
             helper.setSubject("欢迎使用天空之城社区，离完成就差一步了");
             helper.setText("亲爱的用户：您好！感谢您使用天空之城社区服务。" +
-                    "您正在进行邮箱验证，请在验证码输入框中输入此次验证码："+"<b style='color:red'>"+reslut+"</b>"+
+                    "您正在进行邮箱验证，请在验证码输入框中输入此次验证码："+"<b style='color:red'>"+result+"</b>"+
                     " 请在15分钟内按页面提示提交验证码以完成验证，切勿将验证码泄露于他人。" +
                     "如非本人操作，请忽略此邮件，由此给您带来的不便请您谅解！",true);
-            helper.setTo(username);
-            helper.setFrom("1176386463@qq.com");
+            helper.setTo(mail);
+            helper.setFrom("community@wast.club");
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
 
-        log.info("邮箱发送成功，验证码为"+reslut);
-        return ResultVoUtil.success(reslut);
+        log.info("邮箱发送成功，验证码为"+result);
+        return ResultVoUtil.success(result);
     }
     /**
      * 注册
@@ -257,12 +257,13 @@ public class AuthorizeController {
     @PostMapping("/register")
     public String register(@RequestParam("username") String username,
                            @RequestParam("password") String password,
+                           @RequestParam("mail") String mail,
                            @RequestParam("emailYan") String emailYan,
                            Model model){
         if(!StringUtils.isEmpty(username) &&!StringUtils.isEmpty(password) && !StringUtils.isEmpty(emailYan)){
 
-            if(redisTemplate.hasKey(username+"emailKey")){
-                if(emailYan.equals(redisTemplate.opsForValue().get(username+"emailKey"))){
+            if(redisTemplate.hasKey(mail+"emailKey")){
+                if(emailYan.equals(redisTemplate.opsForValue().get(mail+"emailKey"))){
                     if(userService.findByName(username)){
                         User user=new User();
                         user.setAccountId(UUID.randomUUID().toString());

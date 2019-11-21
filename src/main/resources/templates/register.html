@@ -23,7 +23,7 @@
 <form class="form-signin" action="/register" method="post">
     <img class="mb-4" src="/img/tian.svg" alt="" width="72" height="72">
     <h1 class="h3 mb-3 font-weight-normal" th:text="#{register.tip}">Please sign in</h1>
-    <label class="sr-only">Username</label>
+    <label class="sr-only">UserEmail</label>
     <input type="text" name="username" id="username" class="form-control" th:placeholder="#{register.username}" placeholder="Username" required="" autofocus="" onblur="repeatName()">
     <p id="msg" style="color: red"></p>
     <label class="sr-only">Password</label>

@@ -12,21 +12,21 @@ public class CreateNotifyUtil {
         Notification notification = new Notification();
         if(object instanceof Comment){
             Comment comment=(Comment) object;
-            if (receiver == comment.getCommentator()) {
+            if (receiver .equals( comment.getCommentor())) {
                 return null;
             }
-            notification.setNotifier(comment.getCommentator());
+            notification.setNotifier(comment.getCommentor());
         }
         if(object instanceof Question){
             Question question=(Question)object;
-            if(receiver==question.getCreator()){
+            if(receiver.equals(question.getCreator())){
                 return null;
             }
             notification.setNotifier(question.getCreator());
         }
         notification.setGmtCreate(System.currentTimeMillis());
         notification.setNotifierName(notifierName);
-        notification.setOuterid(outerId);
+        notification.setOuterId(outerId);
         notification.setOuterTitle(outerTitle);
         notification.setReceiver(receiver);
         notification.setType(notificationType.getType());

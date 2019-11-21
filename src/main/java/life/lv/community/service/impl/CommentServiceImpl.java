@@ -62,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
             //4.增加之前评论的评论数
             commentExtMapper.incCountComment(dbComment.getId());
             //5.通知回复了评论
-            createNotify(comment, dbComment.getCommentator(), commentator.getName(), comment.getContent(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
+            createNotify(comment, dbComment.getCommentor(), commentator.getName(), comment.getContent(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
 
         }else {
             //回复问题
@@ -82,14 +82,14 @@ public class CommentServiceImpl implements CommentService {
 
     private void createNotify(Comment comment, Long receiver, String notifierName, String outerTitle, NotificationTypeEnum notificationType, Long outerId) {
         //如果评论人是发布人则不通知
-        if (receiver == comment.getCommentator()) {
+        if (receiver .equals(comment.getCommentor()) ) {
             return;
         }
         Notification notification = new Notification();
-        notification.setNotifier(comment.getCommentator());
+        notification.setNotifier(comment.getCommentor());
         notification.setGmtCreate(System.currentTimeMillis());
         notification.setNotifierName(notifierName);
-        notification.setOuterid(outerId);
+        notification.setOuterId(outerId);
         notification.setOuterTitle(outerTitle);
         notification.setReceiver(receiver);
         notification.setType(notificationType.getType());
@@ -109,7 +109,7 @@ public class CommentServiceImpl implements CommentService {
             return new ArrayList<>();
         }
         //获取去重的评论人id
-        Set<Long> commentators= commentList.stream().map(comment -> comment.getCommentator()).collect(Collectors.toSet());
+        Set<Long> commentators= commentList.stream().map(comment -> comment.getCommentor()).collect(Collectors.toSet());
         List<Long> userIds=new ArrayList<>();
         userIds.addAll(commentators);
         //获取评论人并转化成map
@@ -123,7 +123,7 @@ public class CommentServiceImpl implements CommentService {
         List<CommentDTO> commentDTOList=commentList.stream().map(comment -> {
            CommentDTO commentDTO=new CommentDTO();
            BeanUtils.copyProperties(comment,commentDTO);
-           commentDTO.setUser(userMap.get(comment.getCommentator()));
+           commentDTO.setUser(userMap.get(comment.getCommentor()));
            return commentDTO;
         }).collect(Collectors.toList());
         return commentDTOList;

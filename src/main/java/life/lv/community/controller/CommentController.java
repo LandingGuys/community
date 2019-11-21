@@ -60,7 +60,7 @@ public class CommentController {
         comment.setType(commetCreateDTO.getType());
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setGmtModified(System.currentTimeMillis());
-        comment.setCommentator(user.getId());
+        comment.setCommentor(user.getId());
         commentService.insert(comment,user);
         return ResultVoUtil.success();
     }
@@ -91,16 +91,16 @@ public class CommentController {
         if(dbComment==null){
             throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
         }
-        if(user.getId()!=dbComment.getCommentator()){
+        if(!user.getId().equals(dbComment.getCommentor())){
             String res=commentService.incLike(id,user.getId());
             if("success".equals(res)){
                 //通知
                 Notification notification = new Notification();
                 notification.setGmtCreate(System.currentTimeMillis());
                 notification.setType(NotificationTypeEnum.LIKE_COMMENT.getType());
-                notification.setOuterid(id);
+                notification.setOuterId(id);
                 notification.setNotifier(user.getId());
-                notification.setReceiver(dbComment.getCommentator());
+                notification.setReceiver(dbComment.getCommentor());
                 notification.setNotifierName(user.getName());
                 notification.setOuterTitle(dbComment.getContent());
                 notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());

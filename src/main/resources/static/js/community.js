@@ -1,3 +1,23 @@
+
+//登录，模态框跳转注册
+// $("#LogToRes").on('click',function(){
+//     $("#close-login").trigger("click");
+//     $('#myRegister').modal();
+// });
+function LogToRes(){
+    $("#close-login").trigger("click");
+    $('#myRegister').modal();
+}
+//注册，模态框跳转登录
+function ResToLog(){
+    $("#close-register").trigger("click");
+    $('#myLogin').modal();
+};
+
+
+
+
+
 /**
  * 发布问题
  */
@@ -476,16 +496,16 @@ function repeatName() {
 
 }
 function emailYanZheng() {
-    var username=$("#username").val();
+    var mail=$("#mail").val();
     var reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
-    if(!username){
+    if(!mail){
         sweetAlert(
             '邮箱用户名为空',
             '出错了！',
             'error'
         )
     }else{
-        if(reg.test(username)){
+        if(reg.test(mail)){
             // swal({
             //     title: '已发送邮件',
             //     text: '发送成功',
@@ -519,7 +539,7 @@ function emailYanZheng() {
                 type:"GET",
                 url:"/emailYanZheng",
                 data:{
-                    "username":username
+                    "mail":mail
                 },
                 success:function (response) {
                     if(response.code==200){
