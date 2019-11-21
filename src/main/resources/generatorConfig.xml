@@ -10,9 +10,9 @@
         <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin>
 
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://106.75.109.78:3306/community"
+                        connectionURL="jdbc:mysql://localhost:3306/community"
                         userId="root"
-                        password="Lv1003@@">
+                        password="****">
         </jdbcConnection>
 
         <!--默认false，把JDBC DECIMAL 和NUMERIC类型解析为Integer,为true时，把JDBC DECIMAL和NUMERIC类型解析为java.math.bigDecimal-->
