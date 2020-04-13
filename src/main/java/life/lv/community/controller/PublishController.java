@@ -6,7 +6,7 @@ import life.lv.community.dto.QuestionDTO;
 import life.lv.community.exception.CustomizeErrorCode;
 import life.lv.community.exception.CustomizeException;
 import life.lv.community.mapper.UserMapper;
-import life.lv.community.model.QuestionWithBLOBs;
+import life.lv.community.model.Question;
 import life.lv.community.model.User;
 import life.lv.community.service.QuestionService;
 import life.lv.community.utils.ResultVoUtil;
@@ -65,7 +65,7 @@ public class PublishController {
             //model.addAttribute("error", "用户未登录");
             return ResultVoUtil.error(CustomizeErrorCode.NO_LOGIN.getCode(),CustomizeErrorCode.NO_LOGIN.getMessage());
         }
-        QuestionWithBLOBs question = new QuestionWithBLOBs();
+        Question question = new Question();
         question.setTitle(title);
         question.setDescription(description);
         question.setTag(tag);

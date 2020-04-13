@@ -60,7 +60,7 @@ public class QuestionController {
         if(dbQuestion==null){
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
         }
-        if(user.getId()!=dbQuestion.getCreator()){
+        if(!user.getId().equals(dbQuestion.getCreator())){
 
             String res=questionService.incLike(id,user.getId());
             if("success".equals(res)){

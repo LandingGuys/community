@@ -91,9 +91,6 @@ function post() {
     var questionId=$("#question_id").val();
     var content = $('#comment_content').val();
     comment2Target(questionId,1,content);
-
-
-
 }
 //回复评论
 function comment(e) {
@@ -134,20 +131,8 @@ function comment2Target(targetId,type,content) {
                 if(response.code==2003){
                     swal(response.message, {
                         buttons: ["取消",true],
-                    }).then(
-                        function () {
-                            window.open("https://github.com/login/oauth/authorize?client_id=Iv1.b7d0686e97d9e912&redirect_uri=http://47.95.146.87/callback&scope=user&state=1");
-                            window.localStorage.setItem("closeable",true);
-                        }
-                    );
-
-                    // var isAccepted=confirm(response.message);
-                    // if(isAccepted){
-                    //     window.open("https://github.com/login/oauth/authorize?client_id=Iv1.b7d0686e97d9e912&redirect_uri=http://47.95.146.87/callback&scope=user&state=1");
-                    //     window.localStorage.setItem("closeable",true);
-                    // }
+                    });
                 }else{
-                    //alert(response.message);
                     swal(response.message, "You clicked the button!", "error");
                 }
 

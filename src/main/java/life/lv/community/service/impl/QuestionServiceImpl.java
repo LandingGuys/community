@@ -11,7 +11,6 @@ import life.lv.community.mapper.QuestionMapper;
 import life.lv.community.mapper.UserMapper;
 import life.lv.community.model.Question;
 import life.lv.community.model.QuestionExample;
-import life.lv.community.model.QuestionWithBLOBs;
 import life.lv.community.model.User;
 import life.lv.community.service.QuestionService;
 import org.apache.commons.lang3.StringUtils;
@@ -63,8 +62,9 @@ public class QuestionServiceImpl implements QuestionService {
         example.createCriteria().andCreatorEqualTo(userId);
         example.setOrderByClause("gmt_create desc");
         List<Question> questionList = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, pageNum));
-        //List<Question> questionList=questionMapper.listUser(userId,offset,pageNum);
+
         forQuestionDTO(pageinationDTO, questionList);
+        pageinationDTO.setTotalCount(totalUserCount);
         return pageinationDTO;
     }
     //所有问题(加search)
@@ -101,12 +101,13 @@ public class QuestionServiceImpl implements QuestionService {
             }
         }
         Integer totalCount=questionExtMapper.countBySearch(questionQueryDTO);
-            //计算总页数
+        //计算总页数
         Integer offset = getInteger(page, pageNum, pageinationDTO, totalCount);
         questionQueryDTO.setSize(pageNum);
         questionQueryDTO.setPage(offset);
         List<Question> questionList=questionExtMapper.selectBySearch(questionQueryDTO);
         forQuestionDTO(pageinationDTO, questionList);
+        pageinationDTO.setTotalCount(totalCount);
         return pageinationDTO;
     }
 
@@ -114,7 +115,6 @@ public class QuestionServiceImpl implements QuestionService {
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questionList) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
-            //User user = userMapper.findById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question, questionDTO);
             questionDTO.setUser(user);
@@ -135,7 +135,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public void createOrUpdate(QuestionWithBLOBs question) {
+    public void createOrUpdate(Question question) {
 
         if(question.getId()==null){
             //插入
@@ -144,7 +144,7 @@ public class QuestionServiceImpl implements QuestionService {
             question.setViewCount(0);
             question.setLikeCount(0);
             question.setCommentCount(0);
-            questionMapper.insert((QuestionWithBLOBs)question);
+            questionMapper.insert(question);
             //questionMapper.insertSelective(question);
            // questionMapper.create(question);
         }else{
@@ -156,7 +156,7 @@ public class QuestionServiceImpl implements QuestionService {
             if(dbQuestion.getCreator().longValue()!=question.getCreator().longValue()){
                 throw new CustomizeException(CustomizeErrorCode.INVALID_OPERATION);
             }
-            QuestionWithBLOBs updateQuestion = new QuestionWithBLOBs();
+            Question updateQuestion = new Question();
             updateQuestion.setGmtModified(System.currentTimeMillis());
             updateQuestion.setTitle(question.getTitle());
             updateQuestion.setDescription(question.getDescription());
@@ -182,8 +182,8 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public String incLike(long id,long userId) {
         Question dbQuestion =questionMapper.selectByPrimaryKey(id);
-        if( StringUtils.isBlank(((QuestionWithBLOBs) dbQuestion).getLikeUsed()) ||!((QuestionWithBLOBs) dbQuestion).getLikeUsed().contains(userId+",")){
-            QuestionWithBLOBs question = new QuestionWithBLOBs();
+        if( StringUtils.isBlank(( dbQuestion).getLikeUsed()) ||!dbQuestion.getLikeUsed().contains(userId+",")){
+            Question question = new Question();
             question.setLikeUsed(userId+",");
             QuestionExample example = new QuestionExample();
             example.createCriteria().andIdEqualTo(dbQuestion.getId());

@@ -7,12 +7,17 @@
     <!---->
     <context id="DB2Tables" targetRuntime="MyBatis3">
         <!--数据库连接的信息，驱动类，连接地址，用户名，密码-->
+<!--        自带分页-->
         <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin>
-
+<!--        不再追加xml-->
+        <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin"></plugin>
+        <commentGenerator>
+            <property name="suppressAllComments" value="true"></property>
+        </commentGenerator>
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/community"
+                        connectionURL="jdbc:mysql://106.75.109.78:3306/community"
                         userId="root"
-                        password="****">
+                        password="Lv1003@@">
         </jdbcConnection>
 
         <!--默认false，把JDBC DECIMAL 和NUMERIC类型解析为Integer,为true时，把JDBC DECIMAL和NUMERIC类型解析为java.math.bigDecimal-->

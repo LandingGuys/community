@@ -21,6 +21,6 @@ public class CommentDTO {
     //点赞数
     private Integer likeCount;
     //评论数
-    private Long commentCount;
+    private Integer commentCount;
     private User user;
 }

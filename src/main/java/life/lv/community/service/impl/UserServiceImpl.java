@@ -1,5 +1,6 @@
 package life.lv.community.service.impl;
 
+import life.lv.community.mapper.UserExtMapper;
 import life.lv.community.mapper.UserMapper;
 import life.lv.community.model.User;
 import life.lv.community.model.UserExample;
@@ -13,7 +14,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
-
+    @Autowired
+    private UserExtMapper userExtMapper;
     @Override
     public void createOrUpdate(User user) {
         UserExample userExample = new UserExample();
@@ -95,5 +97,17 @@ public class UserServiceImpl implements UserService {
         }else{
             return false;
         }
+    }
+
+    @Override
+    public List<User> findNewUsers(Integer code) {
+        List<User> newUsers = userExtMapper.findNewUsers(code);
+        return newUsers;
+    }
+
+    @Override
+    public User findById(Long id) {
+        User user = userMapper.selectByPrimaryKey(id);
+        return user;
     }
 }

@@ -4,298 +4,328 @@
 
 <body>
 <div th:fragment="nav">
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-
+    <nav class="navbar navbar-default" style="">
+        <div class="container">
+            <!--标题-->
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                    <span class="sr-only">天空之城</span>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">天空之城</a>
+                <!--                <img src="" alt="1024社区" width="35px" style="float:left;margin:8px 8px 0px 0px; ">-->
+                <a class="navbar-brand" th:href="@{/}">天空之城</a>
             </div>
-
-
+            <!--导航-->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <!--左边导航-->
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a class="navbar-brand" th:href="@{/}">发现</a>
+                    </li>
+                    <li>
+                        <a class="navbar-brand" th:href="@{/}">话题</a>
+                    </li>
+                </ul>
+                <!--搜索框-->
+                <form class="navbar-form navbar-left" th:action="@{/}" method="get">
 
-                <form class="navbar-form navbar-left" action="/" method="get">
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="搜索话题" name="search">
+                        <input type="text" th:name="search" class="form-control"
+                               placeholder="搜索问题,话题或人">
                     </div>
-                    <button type="submit" class="btn btn-default">搜索</button>
+                    <button type="submit" class="btn btn-default ">搜索</button>
                 </form>
+                <!--导航栏广告链接-->
+                <ul class="nav navbar-nav">
+                    <!-- <li th:class="${navLi=='chat'? 'active':'' }"></li> -->
+                    <li>
+                        <a th:href="@{/chat}" href="#">闲聊</a>
+                    </li>
+                </ul>
+
+                <!--用户登录状态下-->
                 <ul class="nav navbar-nav navbar-right" th:if="${session.user!=null}">
-                    <li ><a href="/publish">发布</a></li>
-                    <li >
-                        <a href="/profile/replies">
-                            <span class="glyphicon glyphicon-bell"></span>
+                    <!--发布-->
+                    <li>
+                        <a th:href="@{/publish}" >
+                           <span class="glyphicon glyphicon-plus" style="font-size: 18px"></span>
+                        </a>
+                    </li>
+                    <!--通知-->
+                    <li>
+                        <a href="/user/replies">
+                            <span class="glyphicon glyphicon-bell" style="font-size: 18px"></span>
                             <span class="badge" th:text="${session.unreadCount}"></span>
                         </a>
                     </li>
-                    <li class="dropdown" >
+                    <!--用户详情-->
+                    <li id="me" class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >
-                            <span th:text="${session.user.getName()}"></span>
                             <img class="img-rounded" width="20px" th:src="${session.user.getAvatarUrl()}" alt="...">
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="/profile/personal">个人中心</a></li>
-                            <li><a href="/profile/questions">我的问题</a></li>
-                            <li><a href="/profile/replies">我的通知</a></li>
-                            <li><a href="/profile/questions">我的关注</a></li>
-                            <li><a href="/profile/questions">我的收藏</a></li>
-                            <li><a href="/logout">退出</a></li>
+                            <li><a th:href="@{'/user/'+${session.user.getId()}}">个人中心</a></li>
 
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <a th:href="@{/logout}">退出登入</a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
-<!--                    <li th:if="${session.user==null}">-->
-<!--                        <a th:href="@{/login2.html}">登录</a>-->
-<!--                        &lt;!&ndash;<a th:href="@{https://github.com/login/oauth/authorize(client_id='Iv1.b9785368af06692f',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}">登录</a>&ndash;&gt;-->
-<!--                        &lt;!&ndash;<a href="https://github.com/login/oauth/authorize?client_id=Iv1.b7d0686e97d9e912&redirect_uri=http://localhost:8887/callback&scope=user&state=1">&ndash;&gt;-->
-<!--                            &lt;!&ndash;登录</a>&ndash;&gt;-->
-<!--                    </li>-->
-
+                <!--用户未登录状态-->
                 <ul class="nav navbar-nav navbar-right" th:if="${session.user==null}">
-                    <li >
-                        <!-- <a class="login_btn" style="cursor: pointer;">登入</a> -->
+                    <li>
                         <a data-toggle="modal" data-target="#myLogin">登录 </a>
-                        <!--登录下拉模块-->
-                        <div class="modal fade" id="myLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" id="close-login">
-                                            <span aria-hidden="true">×</span>
-                                            <span class="sr-only">Close</span>
-                                        </button>
-                                        <h4 class="modal-title">登录</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="sfModal-content">
-                                            <div class="row bg-white login-modal">
-                                                <div class="col-md-12 login-wrap">
-                                                    <form action="/login" method="POST" role="form" class="mt15">
-                                                        <div class="form-group hidden">
-                                                            <input
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    name="remember"
-                                                                    value="1"
-                                                                    autocomplete="off"
-                                                            />
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="username" class="control-label">手机号 或 Email</label>
-                                                            <input
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    name="username"
-                                                                    id="username"
-                                                                    tabindex="1"
-                                                                    required
-                                                                    placeholder="11 位手机号 或 Email"
-                                                                    autocomplete="off"
-                                                            />
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label">密码</label>
-                                                            <span class="pull-right">
-                                                            <a href="/user/forgot" tabindex="4">忘记密码</a>
-                                                            </span>
-                                                            <input
-                                                                    type="password"
-                                                                    class="form-control"
-                                                                    name="password"
-                                                                    tabindex="2"
-                                                                    required
-                                                                    placeholder="请输入密码"
-                                                            />
-                                                        </div>
-<!--                                                        手机验证码登录暂未实现-->
-                                                        <div class="form-group">
-                                                            <a href="#" class="phoneLogin">手机验证码登录</a>
-                                                        </div>
-                                                        <div class="form-group clearfix">
-                                                            <button
-                                                                    type="submit"
-                                                                    class="btn-block btn btn-primary pull-right pl20 pr20"
-                                                                    tabindex="3"
-
-                                                            >登录</button>
-                                                        </div>
-                                                    </form>
-                                                    <div class="text-muted text-center more-login-area">
-                                                        <span class="more-login-words">更多登录方式</span>
-                                                    </div>
-                                                    <div class="widget-login mb15 text-center">
-
-                                                        <a th:href="@{https://github.com/login/oauth/authorize(client_id='Iv1.b7d0686e97d9e912',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}">
-                                                            <!-- <span class="iconfont icon-sn-github"></span> -->
-                                                            <svg class="icon" aria-hidden="true">
-                                                                <use xlink:href="#icon-sn-github"></use>
-                                                            </svg>
-                                                        </a>
-                                                        <a th:href="@{https://graph.qq.com/oauth2.0/authorize(response_type='code',client_id='101802971',redirect_uri='http://www.wast.club/qqcallback',state=1)}">
-
-                                                            <svg class="icon" aria-hidden="true">
-                                                                <use xlink:href="#icon-sn-qq"></use>
-                                                            </svg>
-                                                        </a>
-<!--                                                        微信暂无授权-->
-<!--                                                        <a href="/user/oauth/weixin">-->
-
-<!--                                                            <svg class="icon" aria-hidden="true">-->
-<!--                                                                <use xlink:href="#icon-sn-weixin"></use>-->
-<!--                                                            </svg>-->
-<!--                                                        </a>-->
-                                                        <a th:href="@{https://openapi.baidu.com/oauth/2.0/authorize(response_type='code',client_id='9LuOVa1xvTbgkNdQvYIBgdIM',redirect_uri='http://www.wast.club/baiducallback',display='popup')}">
-
-                                                            <svg class="icon" aria-hidden="true">
-                                                                <use xlink:href="#icon-sn-baidu"></use>
-                                                            </svg>
-                                                        </a>
-<!--                                                        微博暂无授权-->
-<!--                                                        <a href="/user/oauth/weibo">-->
-
-<!--                                                            <svg class="icon" aria-hidden="true">-->
-<!--                                                                <use xlink:href="#icon-sn-weibo"></use>-->
-<!--                                                            </svg>-->
-<!--                                                        </a>-->
-
-
-
-                                                    </div>
-                                                    <div class="form-group clearfix">
-                                                        <a  class="btn-block btn btn-default pull-right pl20 pr20 SFLogin" id="LogToRes" onclick="LogToRes()">注册新账号</a>
-                                                    </div>
-                                                    <p class="text-muted text-center mb15">
-                                                        继续即表示你同意
-                                                        <a href="#" target="_blank">《服务条款》</a>和
-                                                        <a href="#" target="_blank">《隐私政策》</a>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer hidden"></div>
-                                </div>
-                            </div>
-                        </div>
-
                     </li>
-                    <li >
-                        <!-- <a class="z" style="cursor: pointer;">注册</a> -->
+                    <li>
                         <a data-toggle="modal" data-target="#myRegister">注册 </a>
-                        <!--注册下拉模块-->
-                        <div class="modal fade" id="myRegister" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" id="close-register">
-                                            <span aria-hidden="true">×</span><span class="sr-only">Close</span>
-                                        </button>
-                                        <h4 class="modal-title">注册</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="sfModal-content">
-                                            <div class="row bg-white login-modal">
-                                                <div class="col-md-12 login-wrap">
-                                                    <form action="/register" method="POST" role="form" class="mt15">
-                                                        <div class="form-group">
-                                                            <label for="username" class="control-label">你的名字</label>
-                                                            <input type="text" class="form-control" name="username" required="" placeholder="真实姓名或常用昵称">
-                                                        </div>
 
-                                                        <div class="form-group">
-                                                            <label for="mail" class="control-label">邮箱</label>
-                                                            <input type="text" class="form-control"  name="mail" required="" id="mail" placeholder="you@example.com">
-                                                        </div>
-
-                                                        <input type="text" class="hidden" name="register_type" value="mail">
-
-                                                        <div class="form-group">
-                                                            <div class="captchaInput mb10">
-                                                                <input type="text" class="form-control" name="emailYan" id="emailYan" placeholder="邮件收到的验证码" style="width:50%; display: inline; margin-right: 15px;">
-                                                                <button class="btn btn-lg btn-primary btn-block"  type="button" style="float:right;width: 120px;font-size: unset" onclick="emailYanZheng()"><span id="code-btn" style="font-size: 12px">获取验证码</span></button>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            <div class="phone-register-only hidden">
-                                                                <div class="input-group">
-                                                                    <input name="code" type="text" class="form-control js-user-login__phone-code-value" placeholder="短信验证码">
-                                                                    <span class="input-group-btn">
-                                                                    <button class="btn btn-default js-user-login__phone-vaild-btn" style="width:96px;" type="button">
-                                                                    获取验证码</button>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            <label for="password" class="control-label">密码</label>
-                                                            <input type="password" class="form-control" name="password" id="password" required="" placeholder="不少于 6 位的密码">
-                                                        </div>
-                                                        <div class="form-group clearfix">
-                                                            <button type="submit" class="btn-block btn btn-primary pl20 pr20 pull-right" >注册
-                                                            </button>
-                                                        </div>
-                                                        <div class="text-muted text-center more-login-area">
-                                                            <span class="more-login-words">更多登录方式</span>
-                                                        </div>
-                                                        <div class="widget-login mb15 text-center">
-                                                            <a th:href="@{https://github.com/login/oauth/authorize(client_id='Iv1.b7d0686e97d9e912',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}">
-                                                                <!-- <span class="iconfont icon-sn-github"></span> -->
-                                                                <svg class="icon" aria-hidden="true">
-                                                                    <use xlink:href="#icon-sn-github"></use>
-                                                                </svg>
-                                                            </a>
-                                                            <a th:href="@{https://graph.qq.com/oauth2.0/authorize(response_type='code',client_id='101802971',redirect_uri='http://www.wast.club/qqcallback',state=1)}">
-
-                                                                <svg class="icon" aria-hidden="true">
-                                                                    <use xlink:href="#icon-sn-qq"></use>
-                                                                </svg>
-                                                            </a>
-<!--                                                            微信登录暂无授权-->
-<!--                                                            <a href="#">-->
-
-<!--                                                                <svg class="icon" aria-hidden="true">-->
-<!--                                                                    <use xlink:href="#icon-sn-weixin"></use>-->
-<!--                                                                </svg>-->
-<!--                                                            </a>-->
-                                                            <a th:href="@{https://openapi.baidu.com/oauth/2.0/authorize(response_type='code',client_id='9LuOVa1xvTbgkNdQvYIBgdIM',redirect_uri='http://www.wast.club/baiducallback',display='popup')}">
-
-                                                                <svg class="icon" aria-hidden="true">
-                                                                    <use xlink:href="#icon-sn-baidu"></use>
-                                                                </svg>
-                                                            </a>
-<!--                                                            微博登录暂未授权-->
-<!--                                                            <a href="/user/oauth/weibo">-->
-
-<!--                                                                <svg class="icon" aria-hidden="true">-->
-<!--                                                                    <use xlink:href="#icon-sn-weibo"></use>-->
-<!--                                                                </svg>-->
-<!--                                                            </a>-->
-                                                        </div>
-                                                        <div class="form-group clearfix">
-                                                            <a href="javascript:;" class="btn-block btn btn-default pull-right pl20 pr20SFRegister" id="ResToLog" onclick="ResToLog()">
-                                                                已有账号登录
-                                                            </a>
-                                                        </div>
-                                                        <p class="text-muted text-center mb15">继续即表示你同意<a href="/tos" target="_blank">《服务条款》</a>和<a href="/privacy" target="_blank">《隐私政策》</a></p>            </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer hidden"></div>
-                                </div>
-                            </div>
-                        </div>
                     </li>
+
+
                 </ul>
             </div>
         </div>
     </nav>
+    <!--登录下拉框-->
+    <div class="modal " id="myLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" id="close-login">
+                        <span aria-hidden="true">×</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title">登录</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="sfModal-content">
+                        <div class="row bg-white login-modal">
+                            <div class="col-md-12 login-wrap">
+                                <form action="/login" method="POST" role="form" class="mt15">
+                                    <div class="form-group hidden">
+                                        <input
+                                                type="text"
+                                                class="form-control"
+                                                name="remember"
+                                                value="1"
+                                                autocomplete="off"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="username" class="control-label">手机号 或 Email</label>
+                                        <input
+                                                type="text"
+                                                class="form-control"
+                                                name="username"
+                                                id="username"
+                                                tabindex="1"
+                                                required
+                                                placeholder="11 位手机号 或 Email"
+                                                autocomplete="off"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">密码</label>
+                                        <span class="pull-right">
+                                                            <a href="/user/forgot" tabindex="4">忘记密码</a>
+                                                            </span>
+                                        <input
+                                                type="password"
+                                                class="form-control"
+                                                name="password"
+                                                tabindex="2"
+                                                required
+                                                placeholder="请输入密码"
+                                        />
+                                    </div>
+                                    <!--手机验证码登录暂未实现-->
+                                    <div class="form-group">
+                                        <a href="#" class="phoneLogin">手机验证码登录</a>
+                                    </div>
+                                    <div class="form-group clearfix">
+                                        <button
+                                                type="submit"
+                                                class="btn-block btn btn-primary pull-right pl20 pr20"
+                                                tabindex="3"
+
+                                        >登录
+                                        </button>
+                                    </div>
+                                </form>
+                                <div class="text-muted text-center more-login-area">
+                                    <span class="more-login-words">更多登录方式</span>
+                                </div>
+                                <div class="widget-login mb15 text-center">
+
+                                    <a th:href="@{https://github.com/login/oauth/authorize(client_id='Iv1.b7d0686e97d9e912',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}">
+                                        <!-- <span class="iconfont icon-sn-github"></span> -->
+                                        <svg class="icon" aria-hidden="true">
+                                            <use xlink:href="#icon-sn-github"></use>
+                                        </svg>
+                                    </a>
+                                    <a th:href="@{https://graph.qq.com/oauth2.0/authorize(response_type='code',client_id='101802971',redirect_uri='http://www.wast.club/qqcallback',state=1)}">
+
+                                        <svg class="icon" aria-hidden="true">
+                                            <use xlink:href="#icon-sn-qq"></use>
+                                        </svg>
+                                    </a>
+                                    <!--微信暂无授权-->
+                                    <!--<a href="/user/oauth/weixin">-->
+
+                                    <!--<svg class="icon" aria-hidden="true">-->
+                                    <!--    <use xlink:href="#icon-sn-weixin"></use>-->
+                                    <!--</svg>-->
+                                    <!--</a>-->
+                                    <a th:href="@{https://openapi.baidu.com/oauth/2.0/authorize(response_type='code',client_id='9LuOVa1xvTbgkNdQvYIBgdIM',redirect_uri='http://www.wast.club/baiducallback',display='popup')}">
+
+                                        <svg class="icon" aria-hidden="true">
+                                            <use xlink:href="#icon-sn-baidu"></use>
+                                        </svg>
+                                    </a>
+                                </div>
+                                <div class="form-group clearfix">
+                                    <a class="btn-block btn btn-default pull-right pl20 pr20 SFLogin" id="LogToRes"
+                                       onclick="LogToRes()">注册新账号</a>
+                                </div>
+                                <p class="text-muted text-center mb15">
+                                    继续即表示你同意
+                                    <a href="javascript:;" target="_blank">《服务条款》</a>和
+                                    <a href="javascript:;" target="_blank">《隐私政策》</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer hidden"></div>
+            </div>
+        </div>
+    </div>
+    <!--注册下拉框-->
+    <div class="modal " id="myRegister" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" id="close-register">
+                        <span aria-hidden="true">×</span><span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title">注册</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="sfModal-content">
+                        <div class="row bg-white login-modal">
+                            <div class="col-md-12 login-wrap">
+                                <form action="/register" method="POST" role="form" class="mt15">
+                                    <div class="form-group">
+                                        <label for="username" class="control-label">你的名字</label>
+                                        <input type="text" class="form-control" name="username" required=""
+                                               placeholder="真实姓名或常用昵称">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="mail" class="control-label">邮箱</label>
+                                        <input type="text" class="form-control" name="mail" required="" id="mail"
+                                               placeholder="you@example.com">
+                                    </div>
+
+                                    <input type="text" class="hidden" name="register_type" value="mail">
+
+                                    <div class="form-group">
+                                        <div class="captchaInput mb10">
+                                            <input type="text" class="form-control" name="emailYan" id="emailYan"
+                                                   placeholder="邮件收到的验证码"
+                                                   style="width:50%; display: inline; margin-right: 15px;">
+                                            <button class="btn btn-lg btn-primary btn-block" type="button"
+                                                    style="float:right;width: 120px;font-size: unset"
+                                                    onclick="emailYanZheng()"><span id="code-btn"
+                                                                                    style="font-size: 12px">获取验证码</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="phone-register-only hidden">
+                                            <div class="input-group">
+                                                <input name="code" type="text"
+                                                       class="form-control js-user-login__phone-code-value"
+                                                       placeholder="短信验证码">
+                                                <span class="input-group-btn">
+                                                                    <button class="btn btn-default js-user-login__phone-vaild-btn"
+                                                                            style="width:96px;" type="button">
+                                                                    获取验证码</button>
+                                                                    </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="password" class="control-label">密码</label>
+                                        <input type="password" class="form-control" name="password" id="password"
+                                               required="" placeholder="不少于 6 位的密码">
+                                    </div>
+                                    <div class="form-group clearfix">
+                                        <button type="submit" class="btn-block btn btn-primary pl20 pr20 pull-right">注册
+                                        </button>
+                                    </div>
+                                    <div class="text-muted text-center more-login-area">
+                                        <span class="more-login-words">更多登录方式</span>
+                                    </div>
+                                    <div class="widget-login mb15 text-center">
+                                        <a th:href="@{https://github.com/login/oauth/authorize(client_id='Iv1.b7d0686e97d9e912',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}">
+                                            <!-- <span class="iconfont icon-sn-github"></span> -->
+                                            <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#icon-sn-github"></use>
+                                            </svg>
+                                        </a>
+                                        <a th:href="@{https://graph.qq.com/oauth2.0/authorize(response_type='code',client_id='101802971',redirect_uri='http://www.wast.club/qqcallback',state=1)}">
+
+                                            <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#icon-sn-qq"></use>
+                                            </svg>
+                                        </a>
+                                        <!--                                                            微信登录暂无授权-->
+                                        <!--                                                            <a href="#">-->
+
+                                        <!--                                                                <svg class="icon" aria-hidden="true">-->
+                                        <!--                                                                    <use xlink:href="#icon-sn-weixin"></use>-->
+                                        <!--                                                                </svg>-->
+                                        <!--                                                            </a>-->
+                                        <a th:href="@{https://openapi.baidu.com/oauth/2.0/authorize(response_type='code',client_id='9LuOVa1xvTbgkNdQvYIBgdIM',redirect_uri='http://www.wast.club/baiducallback',display='popup')}">
+
+                                            <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#icon-sn-baidu"></use>
+                                            </svg>
+                                        </a>
+                                        <!--                                                            微博登录暂未授权-->
+                                        <!--                                                            <a href="/user/oauth/weibo">-->
+
+                                        <!--                                                                <svg class="icon" aria-hidden="true">-->
+                                        <!--                                                                    <use xlink:href="#icon-sn-weibo"></use>-->
+                                        <!--                                                                </svg>-->
+                                        <!--                                                            </a>-->
+                                    </div>
+                                    <div class="form-group clearfix">
+                                        <a href="javascript:;"
+                                           class="btn-block btn btn-default pull-right pl20 pr20SFRegister"
+                                           id="ResToLog" onclick="ResToLog()">
+                                            已有账号登录
+                                        </a>
+                                    </div>
+                                    <p class="text-muted text-center mb15">继续即表示你同意<a href="javascript:;"
+                                                                                      target="_blank">《服务条款》</a>和<a
+                                            href="javascript:;" target="_blank">《隐私政策》</a></p></form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer hidden"></div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 

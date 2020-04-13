@@ -5,47 +5,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Register in</title>
-    <!-- Bootstrap core CSS -->
-
-    <link href="asserts/css/bootstrap.min.css"th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.css}"   rel="stylesheet">
-    <!-- Custom styles for this template -->
-    <link href="css/signin.css" rel="stylesheet">
-    <script src="/js/jquery-3.4.1.min.js"></script>
-    <script src="/js/bootstrap.min.js" type="application/javascript"></script>
-    <script src="/js/community.js"></script>
-    <script src="/js/sweetalert.min.js"></script>
-
-
+    <title>Sign in</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/LR.css">
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="https://at.alicdn.com/t/font_1520101_nbyacqf9te.js"></script>
 </head>
 
-<body class="text-center">
-<form class="form-signin" action="/register" method="post">
-    <img class="mb-4" src="/img/tian.svg" alt="" width="72" height="72">
-    <h1 class="h3 mb-3 font-weight-normal" th:text="#{register.tip}">Please sign in</h1>
-    <label class="sr-only">UserEmail</label>
-    <input type="text" name="username" id="username" class="form-control" th:placeholder="#{register.username}" placeholder="Username" required="" autofocus="" onblur="repeatName()">
-    <p id="msg" style="color: red"></p>
-    <label class="sr-only">Password</label>
-    <input type="password" name="password" class="form-control" th:placeholder="#{register.password}" placeholder="Password" required="">
-    <p th:if="${not #strings.isEmpty(msg)}" th:text="${msg}" style="color: red"></p>
+<body>
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
 
-    <label class="sr-only">验证码</label>
-    <input type="text" name="emailYan" id="emailYan" class="form-control"  placeholder="验证码" style="width: 150px;">
-    <button class="btn btn-lg btn-primary btn-block"  type="button" style="float:right;width: 120px;margin-top: -46px;font-size: unset" onclick="emailYanZheng()"><span id="code-btn" style="font-size: 12px">获取验证码</span></button>
-    <button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{register.btn}">注册</button>
-    <p class="mt-5 mb-3 text-muted">© 2019-2020</p>
-    <a class="btn btn-sm" th:href="@{/register.html(l='zh_CN')}">中文</a>
-    <a class="btn btn-sm" th:href="@{/register.html(l='en_US')}">English</a>
+            <h4 class="modal-title">注册</h4>
+        </div>
+        <div class="modal-body">
+            <div class="sfModal-content">
+                <div class="row bg-white login-modal">
+                    <div class="col-md-12 login-wrap">
+                        <form action="/register" method="POST" role="form" class="mt15">
+                            <div class="form-group">
+                                <label for="username" class="control-label">你的名字</label>
+                                <input type="text" class="form-control" name="username" required=""
+                                       placeholder="真实姓名或常用昵称">
+                            </div>
 
-    <div style="margin-top: 20px;
-    margin-left: -20px;">
-        <a href="/login.html">
-           马上去登录
-        </a>
+                            <div class="form-group">
+                                <label for="mail" class="control-label">邮箱</label>
+                                <input type="text" class="form-control" name="mail" required="" id="mail"
+                                       placeholder="you@example.com">
+                            </div>
+
+                            <input type="text" class="hidden" name="register_type" value="mail">
+
+                            <div class="form-group">
+                                <div class="captchaInput mb10">
+                                    <input type="text" class="form-control" name="emailYan" id="emailYan"
+                                           placeholder="邮件收到的验证码"
+                                           style="width:50%; display: inline; margin-right: 15px;">
+                                    <button class="btn btn-lg btn-primary btn-block" type="button"
+                                            style="float:right;width: 120px;font-size: unset"
+                                            onclick="emailYanZheng()"><span id="code-btn"
+                                                                            style="font-size: 12px">获取验证码</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="phone-register-only hidden">
+                                    <div class="input-group">
+                                        <input name="code" type="text"
+                                               class="form-control js-user-login__phone-code-value"
+                                               placeholder="短信验证码">
+                                        <span class="input-group-btn">
+                                                                    <button class="btn btn-default js-user-login__phone-vaild-btn"
+                                                                            style="width:96px;" type="button">
+                                                                    获取验证码</button>
+                                                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password" class="control-label">密码</label>
+                                <input type="password" class="form-control" name="password" id="password"
+                                       required="" placeholder="不少于 6 位的密码">
+                            </div>
+                            <div class="form-group clearfix">
+                                <button type="submit" class="btn-block btn btn-primary pl20 pr20 pull-right">注册
+                                </button>
+                            </div>
+                            <div class="text-muted text-center more-login-area">
+                                <span class="more-login-words">更多登录方式</span>
+                            </div>
+                            <div class="widget-login mb15 text-center">
+                                <a th:href="@{https://github.com/login/oauth/authorize(client_id='Iv1.b7d0686e97d9e912',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}">
+                                    <!-- <span class="iconfont icon-sn-github"></span> -->
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-sn-github"></use>
+                                    </svg>
+                                </a>
+                                <a th:href="@{https://graph.qq.com/oauth2.0/authorize(response_type='code',client_id='101802971',redirect_uri='http://www.wast.club/qqcallback',state=1)}">
+
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-sn-qq"></use>
+                                    </svg>
+                                </a>
+                                <!--                                                            微信登录暂无授权-->
+                                <!--                                                            <a href="#">-->
+
+                                <!--                                                                <svg class="icon" aria-hidden="true">-->
+                                <!--                                                                    <use xlink:href="#icon-sn-weixin"></use>-->
+                                <!--                                                                </svg>-->
+                                <!--                                                            </a>-->
+                                <a th:href="@{https://openapi.baidu.com/oauth/2.0/authorize(response_type='code',client_id='9LuOVa1xvTbgkNdQvYIBgdIM',redirect_uri='http://www.wast.club/baiducallback',display='popup')}">
+
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-sn-baidu"></use>
+                                    </svg>
+                                </a>
+                                <!--                                                            微博登录暂未授权-->
+                                <!--                                                            <a href="/user/oauth/weibo">-->
+
+                                <!--                                                                <svg class="icon" aria-hidden="true">-->
+                                <!--                                                                    <use xlink:href="#icon-sn-weibo"></use>-->
+                                <!--                                                                </svg>-->
+                                <!--                                                            </a>-->
+                            </div>
+                            <div class="form-group clearfix">
+                                <a href="javascript:;"
+                                   class="btn-block btn btn-default pull-right pl20 pr20SFRegister"
+                                   id="ResToLog" onclick="ResToLog()">
+                                    已有账号登录
+                                </a>
+                            </div>
+                            <p class="text-muted text-center mb15">继续即表示你同意<a href="javascript:;"
+                                                                              target="_blank">《服务条款》</a>和<a
+                                    href="javascript:;" target="_blank">《隐私政策》</a></p></form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer hidden"></div>
     </div>
-</form>
+</div>
+
+
+
 
 </body>
-
 </html>

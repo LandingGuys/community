@@ -94,6 +94,8 @@ public class AuthorizeController {
 //            redisTemplate.opsForValue().set(String.format("token_%s",token),String.valueOf(githubUser.getId()),expire, TimeUnit.SECONDS);
             User user=new User();
             user.setAccountId(String.valueOf(openId));
+            user.setUserRegion("china");
+            user.setUserIntroduction("这个人很懒，还没有简介");
             if(qqUser.getNickname()!=null){
                 user.setName(qqUser.getNickname());
             }else{
@@ -130,8 +132,8 @@ public class AuthorizeController {
         baiduAccessTokenDTO.setRedirect_uri(BaiduRedirectUri);
         baiduAccessTokenDTO.setCode(code);
         baiduAccessTokenDTO.setGrant_type("authorization_code");
-        String accessToken=baiDuProvider.getAccessToken(baiduAccessTokenDTO);
-        BaiduUser baiduUser=baiDuProvider.getUser(accessToken);
+        String accessToken=BaiDuProvider.getAccessToken(baiduAccessTokenDTO);
+        BaiduUser baiduUser=BaiDuProvider.getUser(accessToken);
         if(baiduUser!=null && baiduUser.getUserid()!=null){
             //登录成功,写cookie和session/改为redis
             String token=UUID.randomUUID().toString();
@@ -139,6 +141,8 @@ public class AuthorizeController {
 //            redisTemplate.opsForValue().set(String.format("token_%s",token),String.valueOf(githubUser.getId()),expire, TimeUnit.SECONDS);
             User user=new User();
             user.setAccountId(String.valueOf(baiduUser.getUserid()));
+            user.setUserRegion("china");
+            user.setUserIntroduction("这个人很懒，还没有简介");
             if(baiduUser.getUsername()!=null){
                 user.setName(baiduUser.getUsername());
             }else{
@@ -187,6 +191,8 @@ public class AuthorizeController {
 //            redisTemplate.opsForValue().set(String.format("token_%s",token),String.valueOf(githubUser.getId()),expire, TimeUnit.SECONDS);
             User user=new User();
             user.setAccountId(String.valueOf(githubUser.getId()));
+            user.setUserRegion("china");
+            user.setUserIntroduction("这个人很懒，还没有简介");
             if(githubUser.getName()!=null){
                 user.setName(githubUser.getName());
             }else{
@@ -270,6 +276,8 @@ public class AuthorizeController {
                         user.setName(username);
                         user.setPassword(MD5Util.md5(password));
                         user.setAvatarUrl("https://shuixin.oss-cn-beijing.aliyuncs.com/tian.png");
+                        user.setUserRegion("china");
+                        user.setUserIntroduction("这个人很懒，还没有简介");
                         userService.register(user);
                         return "result";
                     }else{

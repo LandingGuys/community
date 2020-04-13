@@ -4,6 +4,7 @@ import life.lv.community.dto.NotificationDTO;
 import life.lv.community.enums.NotificationTypeEnum;
 import life.lv.community.mapper.CommentMapper;
 import life.lv.community.model.Comment;
+import life.lv.community.model.Notification;
 import life.lv.community.model.User;
 import life.lv.community.service.NotificationService;
 import life.lv.community.utils.ResultVoUtil;
@@ -33,19 +34,34 @@ public class NotificationController {
         }
         NotificationDTO notificationDTO = notificationService.read(id, user);
 
-        if (NotificationTypeEnum.REPLY_QUESTION.getType() == notificationDTO.getType()
-        || NotificationTypeEnum.LIKE_QUESTION.getType()==notificationDTO.getType()
+        if (NotificationTypeEnum.REPLY_QUESTION.getType().equals(notificationDTO.getType())
+        || NotificationTypeEnum.LIKE_QUESTION.getType().equals(notificationDTO.getType())
         ) {
-            return "redirect:/question/" + notificationDTO.getOuterid();
-        }else if(NotificationTypeEnum.REPLY_COMMENT.getType() == notificationDTO.getType()
-                || NotificationTypeEnum.LIKE_COMMENT.getType()==notificationDTO.getType()
+            return "redirect:/question/" + notificationDTO.getOuterId();
+        }else if(NotificationTypeEnum.REPLY_COMMENT.getType().equals(notificationDTO.getType())
+                || NotificationTypeEnum.LIKE_COMMENT.getType().equals(notificationDTO.getType())
         ){
-            Comment dbComment= commentMapper.selectByPrimaryKey(notificationDTO.getOuterid());
-            //Comment dbComment=commentMapper.selectParentId(notificationDTO.getOuterid());
+            Comment dbComment= commentMapper.selectByPrimaryKey(notificationDTO.getOuterId());
             return "redirect:/question/" + dbComment.getParentId();
         }
         else {
             return "redirect:/";
+        }
+    }
+
+
+    @GetMapping("/notification/dynamic/{id}")
+    public String dynamicTo(@PathVariable(name = "id") Long id) {
+        Notification notification = notificationService.findById(id);
+
+        if (NotificationTypeEnum.REPLY_QUESTION.getType().equals(notification.getType())
+                || NotificationTypeEnum.LIKE_QUESTION.getType().equals(notification.getType())
+        ) {
+            return "redirect:/question/" + notification.getOuterId();
+        }else {
+            Comment dbComment= commentMapper.selectByPrimaryKey(notification.getOuterId());
+            System.out.println(dbComment);
+            return "redirect:/question/" + dbComment.getParentId();
         }
     }
     @ResponseBody
