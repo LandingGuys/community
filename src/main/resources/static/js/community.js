@@ -133,7 +133,7 @@ function comment2Target(targetId,type,content) {
             }else{
                 if(response.code==2003){
                     swal(response.message, {
-                        buttons: ["取消", true],
+                        buttons: ["取消",true],
                     }).then(
                         function () {
                             window.open("https://github.com/login/oauth/authorize?client_id=Iv1.b7d0686e97d9e912&redirect_uri=http://47.95.146.87/callback&scope=user&state=1");
